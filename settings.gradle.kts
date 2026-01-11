@@ -23,6 +23,9 @@ include(":projects:pswg_blasters")
 // The gadgets module
 include(":projects:pswg_gadgets")
 
+// The networks module
+include(":projects:pswg_networks")
+
 // The dummy entrypoint module that depends on all other modules
 include(":projects:pswg_entrypoint")
 

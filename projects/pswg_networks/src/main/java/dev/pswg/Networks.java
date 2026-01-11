@@ -35,7 +35,6 @@ public final class Networks implements GalaxiesAddon
 	@Override
 	public void onGalaxiesReady()
 	{
-
 		LOGGER.info("Module initialized");
 	}
 }

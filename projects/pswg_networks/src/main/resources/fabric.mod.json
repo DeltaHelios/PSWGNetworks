@@ -22,7 +22,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"pswg-addon": [
-			"dev.pswg.networks"
+			"dev.pswg.Networks"
 		],
 		"pswg-client-addon": [
 			"dev.pswg.NetworksClient"
