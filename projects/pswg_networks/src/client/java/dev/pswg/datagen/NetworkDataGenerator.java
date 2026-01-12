@@ -1,5 +1,6 @@
 package dev.pswg.datagen;
 
+import dev.pswg.container.NetworksItemGroups;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -56,10 +57,6 @@ public class NetworkDataGenerator implements DataGeneratorEntrypoint
 	 */
 	private static class LangGenerator extends FabricLanguageProvider
 	{
-		private record NetworkLang(String name, Map<Identifier, String> attachmentLangs)
-		{
-		}
-
 		protected LangGenerator(FabricDataOutput dataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup)
 		{
 			super(dataOutput, "en_us", registryLookup);
@@ -68,6 +65,7 @@ public class NetworkDataGenerator implements DataGeneratorEntrypoint
 		@Override
 		public void generateTranslations(RegistryWrapper.WrapperLookup registryLookup, TranslationBuilder translationBuilder)
 		{
+			translationBuilder.add(NetworksItemGroups.NETWORKS_GROUP_KEY, "PSWG - Networks");
 		}
 	}
 
