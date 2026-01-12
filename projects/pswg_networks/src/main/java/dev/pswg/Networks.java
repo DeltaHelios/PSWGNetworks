@@ -1,6 +1,10 @@
 package dev.pswg;
 
 import dev.pswg.api.GalaxiesAddon;
+import dev.pswg.container.NetworksBlockEntities;
+import dev.pswg.container.NetworksBlocks;
+import dev.pswg.container.NetworksItemGroups;
+import dev.pswg.container.NetworksItems;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 
@@ -35,6 +39,11 @@ public final class Networks implements GalaxiesAddon
 	@Override
 	public void onGalaxiesReady()
 	{
+		NetworksItems.register();
+		NetworksItemGroups.register();
+		NetworksBlocks.register();
+		NetworksBlockEntities.register();
+
 		LOGGER.info("Module initialized");
 	}
 }
