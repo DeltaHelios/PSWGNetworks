@@ -9,7 +9,7 @@ import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 
 /**
- * The main entrypoint for PSWG common-side blaster features
+ * The main entrypoint for PSWG common-side network features
  */
 public final class Networks implements GalaxiesAddon
 {
@@ -32,7 +32,7 @@ public final class Networks implements GalaxiesAddon
 	}
 
 	/**
-	 * A logger available only to PSWG module and addon blasters
+	 * A logger available only to PSWG module and addon networks
 	 */
 	public static final Logger LOGGER = Galaxies.createSubLogger(MODID);
 
