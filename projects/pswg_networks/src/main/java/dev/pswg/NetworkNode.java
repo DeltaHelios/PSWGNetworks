@@ -104,7 +104,13 @@ public class NetworkNode implements AutoCloseable {
 		return _location;
 	}
 
-	public static NetworkNode Create(@NotNull GlobalPos location){
+	public static @Nullable NetworkNode FromId(@NotNull UUID id){
+		Objects.requireNonNull(id);
+		return NetworkTable._Nodes.get(id);
+	}
+
+
+	public static @NotNull NetworkNode Create(@NotNull GlobalPos location){
 		NetworkNode output = new NetworkNode(location);
 		NetworkTable._Nodes.put(output._id, output);
 		return output;

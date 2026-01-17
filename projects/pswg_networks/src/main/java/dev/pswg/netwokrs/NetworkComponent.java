@@ -1,6 +1,8 @@
-package dev.pswg;
+package dev.pswg.netwokrs;
 
-import net.minecraft.block.Block;
+import dev.pswg.Network;
+import dev.pswg.NetworkNode;
+import dev.pswg.Networks;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -11,42 +13,54 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.UUID;
 
-public abstract class NetworkComponent extends Block {
+public abstract class NetworkComponent extends BlockEntity {
 
+	@Nullable
 	public NetworkNode node;
 
-	public NetworkComponent(Settings settings) {
-		super(settings);
-
-
+	protected void disposeNode(){
+		if(node != null){
+			node.close();
+		}
+		node = null;
 	}
 
-	@Override
-	public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-		super.onPlaced(world, pos, state, placer, itemStack);
-		Objects.requireNonNull(world);
 
-		node = NetworkNode.Create(new GlobalPos(world.getRegistryKey(), pos));
+	public NetworkComponent(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+		super(type, pos, state);
+	}
+
+	public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+		Objects.requireNonNull(world);
+		Objects.requireNonNull(itemStack);
+
+		// TODO: validate that itemStack item type inherits from NetworkComponentPlacer
+
+		@Nullable UUID networkId = itemStack.get(Networks.UUID_COMPONENT_TYPE);
+
+		if(networkId != null){
+			node = NetworkNode.Create(new GlobalPos(world.getRegistryKey(), pos));
+
+			Network.FromId(networkId);
+		}
+
 		// attempt to connect to the network.
 	}
 
-	@Override
 	public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
-		super.onBroken(world, pos, state);
+		disposeNode();
 		// disconnect from the network
 	}
 
-	@Override
-	protected void onStateReplaced(BlockState state, ServerWorld world, BlockPos pos, boolean moved) {
-		super.onStateReplaced(state, world, pos, moved);
-
+	public void onStateReplaced(BlockState state, ServerWorld world, BlockPos pos, boolean moved) {
 		if(moved){
 			// disconnect from the network, attempt to reconnect based on new blockPos.
+			// on a failure to reconnect, dispose of node.
 		}
 	}
 }

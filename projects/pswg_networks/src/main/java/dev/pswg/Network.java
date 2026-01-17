@@ -51,7 +51,7 @@ public class Network implements AutoCloseable {
 	private final Graph<NetworkNode, DefaultWeightedEdge> _graph = new AsSynchronizedGraph<>(new SimpleWeightedGraph<>(DefaultWeightedEdge.class));
 
 	@NotNull
-	public UUID get_id(){
+	public UUID getId(){
 		return _id;
 	}
 

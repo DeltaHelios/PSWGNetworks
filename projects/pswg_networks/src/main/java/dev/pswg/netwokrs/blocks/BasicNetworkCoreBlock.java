@@ -1,21 +1,39 @@
 package dev.pswg.netwokrs.blocks;
 
-import dev.pswg.Network;
-import dev.pswg.NetworkComponent;
-import dev.pswg.NetworkTable;
+import com.mojang.serialization.MapCodec;
+import dev.pswg.Networks;
+import dev.pswg.netwokrs.blockEntities.BasicNetworkCoreBlockEntity;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
 import java.util.UUID;
 
-public class BasicNetworkCoreBlock extends NetworkComponent {
+public class BasicNetworkCoreBlock extends BlockWithEntity {
+
+	public static Identifier ID = Networks.id("basic_network_core");
+
+	private UUID networkId;
+
+	public BasicNetworkCoreBlock(Settings settings) {
+		super(settings);
+	}
+
+	@Override
+	protected MapCodec<? extends BlockWithEntity> getCodec() {
+		return null;
+	}
+
+	@Override
+	public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+		return new BasicNetworkCoreBlockEntity(, pos, state);
+	}
 
 
-	public BasicNetworkCoreBlock(
+	/*public BasicNetworkCoreBlock(
 			BlockEntityType<?> type,
 			BlockPos pos,
 			BlockState state,
@@ -36,5 +54,5 @@ public class BasicNetworkCoreBlock extends NetworkComponent {
 		}
 
 		target.AddNode(node);
-	}
+	}*/
 }

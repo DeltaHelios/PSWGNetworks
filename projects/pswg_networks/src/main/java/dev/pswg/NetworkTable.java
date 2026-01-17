@@ -10,11 +10,6 @@ public final class NetworkTable {
 
 	@NotNull
 	static ConcurrentHashMap<@NotNull UUID, @NotNull Network> _Networks = new ConcurrentHashMap<>();
-
-	public static Map<@NotNull UUID, @NotNull Network> GetNetworks(){
-		return Map.copyOf(_Networks);
-	}
-
 	private static void CloseNetworks(){
 		ArrayList<Network> snapshot = new ArrayList<>(_Networks.values());
 
@@ -32,9 +27,6 @@ public final class NetworkTable {
 
 	static ConcurrentHashMap<@NotNull UUID, @NotNull NetworkNode> _Nodes = new ConcurrentHashMap<>();
 
-	public static Map<@NotNull UUID, @NotNull NetworkNode> GetNodes(){
-		return Map.copyOf(_Nodes);
-	}
 	private static void CloseNodes(){
 		ArrayList<NetworkNode> snapshot = new ArrayList<>(_Nodes.values());
 
