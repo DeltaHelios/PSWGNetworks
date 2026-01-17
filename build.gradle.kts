@@ -91,6 +91,8 @@ allprojects {
 
 		// Fabric API
 		modImplementation("net.fabricmc.fabric-api:fabric-api:${fabric_version}")
+
+		implementation("org.jgrapht:jgrapht-core:1.5.2")
 	}
 
 	tasks.processResources {
