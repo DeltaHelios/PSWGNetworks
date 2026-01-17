@@ -39,7 +39,9 @@ public abstract class NetworkComponent extends BlockEntity {
 		Objects.requireNonNull(world);
 		Objects.requireNonNull(itemStack);
 
-		// TODO: validate that itemStack item type inherits from NetworkComponentPlacer
+		if (!(itemStack.getItem() instanceof NetworkComponentPlacer)){
+			// TODO: no idea what to do here.
+		}
 
 		@Nullable UUID networkId = itemStack.get(Networks.UUID_COMPONENT_TYPE);
 

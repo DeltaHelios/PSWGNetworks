@@ -35,7 +35,4 @@ public final class BasicNetworkCoreBlockEntity extends NetworkComponent {
 		itemStack.set(Networks.UUID_COMPONENT_TYPE, Network.Create(world.getRegistryKey()).getId());
 		super.onPlaced(world, pos, state, placer, itemStack);
 	}
-
-
-
 }

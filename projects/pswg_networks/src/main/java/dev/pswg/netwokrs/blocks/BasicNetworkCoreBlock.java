@@ -2,21 +2,17 @@ package dev.pswg.netwokrs.blocks;
 
 import com.mojang.serialization.MapCodec;
 import dev.pswg.Networks;
+import dev.pswg.netwokrs.NetworkBlock;
+import dev.pswg.netwokrs.NetworkComponent;
 import dev.pswg.netwokrs.blockEntities.BasicNetworkCoreBlockEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
+public class BasicNetworkCoreBlock extends NetworkBlock {
 
-public class BasicNetworkCoreBlock extends BlockWithEntity {
-
-	public static Identifier ID = Networks.id("basic_network_core");
-
-	private UUID networkId;
+	public static final Identifier ID = Networks.id("basic_network_core");
 
 	public BasicNetworkCoreBlock(Settings settings) {
 		super(settings);
@@ -28,10 +24,9 @@ public class BasicNetworkCoreBlock extends BlockWithEntity {
 	}
 
 	@Override
-	public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+	protected NetworkComponent createNetworkComponent(BlockPos pos, BlockState state) {
 		return new BasicNetworkCoreBlockEntity(pos, state);
 	}
-
 
 	/*public BasicNetworkCoreBlock(
 			BlockEntityType<?> type,
