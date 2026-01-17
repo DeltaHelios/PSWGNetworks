@@ -15,7 +15,10 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.BiFunction;
 
-public class NetworkNode {
+public class NetworkNode implements AutoCloseable {
+	@NotNull
+	private final UUID _id = UUID.randomUUID();
+
 	//TODO: make this data driven instead of hard coded.
 	@SuppressWarnings("FieldCanBeLocal")
 	private final int _range = 10;
@@ -101,7 +104,13 @@ public class NetworkNode {
 		return _location;
 	}
 
-	public NetworkNode(@NotNull GlobalPos location){
+	public static NetworkNode Create(@NotNull GlobalPos location){
+		NetworkNode output = new NetworkNode(location);
+		NetworkTable._Nodes.put(output._id, output);
+		return output;
+	}
+
+	private NetworkNode(@NotNull GlobalPos location){
 		Objects.requireNonNull(location);
 		_location = location;
 	}
@@ -110,5 +119,9 @@ public class NetworkNode {
 
 	public Set<GlobalPos> GetRange(){
 		return _rangeFinder.apply(_range, this);
+	}
+	@Override
+	public void close() {
+		NetworkTable._Nodes.remove(_id);
 	}
 }

@@ -11,7 +11,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class ChunkReference {
+// I swear this was necessary at some point...
+public final class ChunkReference {
 	@NotNull
 	private final ChunkPos _location;
 

@@ -30,18 +30,18 @@ public class Network implements AutoCloseable {
 	private final RegistryKey<World> _world;
 
 	public static Network Create(@NotNull RegistryKey<World> world){
-		Network n = new Network(world, /*private*/ true);
-		NetworkTable.reg.put(n._id, n);
+		Network n = new Network(world);
+		NetworkTable._Networks.put(n._id, n);
 		return n;
 	}
 
-	private Network(@NotNull RegistryKey<World> world, boolean ignored){
+	private Network(@NotNull RegistryKey<World> world){
 		_world = Objects.requireNonNull(world);
 	}
 
 	public static @Nullable Network FromId(@NotNull UUID id){
 		Objects.requireNonNull(id, "id");
-		return NetworkTable.reg.get(id);
+		return NetworkTable._Networks.get(id);
 	}
 
 
@@ -148,8 +148,6 @@ public class Network implements AutoCloseable {
 			_lock.writeLock().unlock();
 		}
 	}
-
-
 
 	/**
 	 * Adds a {@link NetworkNode} to this network.
@@ -315,7 +313,22 @@ public class Network implements AutoCloseable {
 	}
 
 	@Override
-	public void close() throws Exception {
-		NetworkTable.reg.remove(_id);
+	public void close() {
+		_lock.writeLock().lock();
+		try{
+			NetworkTable._Networks.remove(_id);
+
+			Set<NetworkNode> nodes = _graph.vertexSet();
+
+			_rangeData.clear();
+
+			_graph.removeAllVertices(nodes);
+			for(NetworkNode node : nodes){
+				node.close();
+			}
+		}
+		finally {
+			_lock.writeLock().unlock();
+		}
 	}
 }

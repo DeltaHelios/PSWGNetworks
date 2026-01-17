@@ -5,6 +5,7 @@ import dev.pswg.container.NetworksBlockEntities;
 import dev.pswg.container.NetworksBlocks;
 import dev.pswg.container.NetworksItemGroups;
 import dev.pswg.container.NetworksItems;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 
@@ -43,14 +44,11 @@ public final class Networks implements GalaxiesAddon
 		NetworksBlocks.register();
 		NetworksBlockEntities.register();
 
-		LOGGER.info("Module initialized");
-	}
-
-	// Need to figure out how to do this.
-	/*@Override
-	public void onInitialize(){
+		// When the server stops dispose of all networks (which will also dispose all nodes).
 		ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
 			NetworkTable.CloseAll();
 		});
-	}*/
+
+		LOGGER.info("Module initialized");
+	}
 }
