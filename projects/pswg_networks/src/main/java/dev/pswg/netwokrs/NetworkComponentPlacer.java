@@ -4,17 +4,23 @@ import dev.pswg.NetworkNode;
 import dev.pswg.Networks;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.item.tooltip.TooltipData;
+import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.swing.*;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public abstract class NetworkComponentPlacer extends BlockItem {
 
@@ -68,4 +74,30 @@ public abstract class NetworkComponentPlacer extends BlockItem {
 		stack.set(Networks.UUID_COMPONENT_TYPE, networkId);
 		return ActionResult.SUCCESS;
 	}
+
+	@Override
+	public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
+		super.appendTooltip(stack, context, displayComponent, textConsumer, type);
+	}
+
+	@Override
+	public Optional<TooltipData> getTooltipData(ItemStack stack) {
+		return super.getTooltipData(stack);
+	}
+
+	/*@Override
+	public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
+
+		if(X11.Screen.hasShiftDown()) {
+			tooltip.add(Text.translatable("tooltip.pswg.networks.chisel.shift_down"));
+		} else {
+			tooltip.add(Text.translatable("tooltip.tutorialmod.chisel"));
+		}
+
+		if(stack.get(ModDataComponentTypes.COORDINATES) != null) {
+			tooltip.add(Text.literal("Last Block Changed at " + stack.get(ModDataComponentTypes.COORDINATES)));
+		}
+
+		super.appendTooltip(stack, context, tooltip, type);
+	}*/
 }
