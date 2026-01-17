@@ -1,6 +1,7 @@
 package dev.pswg;
 
 import dev.pswg.util.NetworkDefaults;
+import net.jcip.annotations.GuardedBy;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
@@ -10,13 +11,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.BiFunction;
 
 public class NetworkNode {
 	//TODO: make this data driven instead of hard coded.
 	@SuppressWarnings("FieldCanBeLocal")
-	@NotNull
-	private final Integer _range = 10;
+	private final int _range = 10;
 
 	@NotNull
 	private final GlobalPos _location;
@@ -27,16 +29,29 @@ public class NetworkNode {
 	 * <p>This value is {@code null} until the object is assigned to a network.</p>
 	 */
 	@Nullable
+	@GuardedBy("Network._lock")
 	private UUID _networkId = null;
+
+	@NotNull
+	private final ReadWriteLock _lock = new ReentrantReadWriteLock();
 
 	/**
 	 * Returns the identifier of the network this object belongs to.
+	 * <b color=Red>Thread-safety:</b> The caller <em>must</em> hold the owning {@link Network}'s
+	 * write lock when invoking this method. This requirement applies to <em>all</em>
+	 * callers.
 	 *
 	 * @return the network UUID, or {@code null} if this object is not assigned to any network
 	 */
 	@Nullable
 	public UUID GetNetworkId(){
-		return _networkId;
+		_lock.readLock().lock();
+		try{
+			return _networkId;
+		}
+		finally {
+			_lock.readLock().unlock();
+		}
 	}
 
 	/**
@@ -45,17 +60,29 @@ public class NetworkNode {
 	 * <p>This method will only succeed once. If a network ID is already set,
 	 * the assignment is rejected and the method returns {@code false}.</p>
 	 *
+	 * <p><b color=Red>Thread-safety:</b> The caller <em>must</em> hold the owning {@link Network}'s
+	 * write lock when invoking this method.</p>
+	 *
+	 * This method should only be called by {@link Network}.
+	 *
 	 * @param NetworkID the UUID of the network to assign
 	 * @return {@code true} if the network ID was set successfully;
 	 *         {@code false} if this object was already assigned to a network
 	 */
-	public boolean SetNetwork(UUID NetworkID){
-		if(_networkId == null){
-			_networkId = NetworkID;
-			return true;
+	boolean SetNetwork(UUID NetworkID){
+		Objects.requireNonNull(NetworkID, "NetworkID");
+		_lock.writeLock().lock();
+		try{
+			if(_networkId == null){
+				_networkId = NetworkID;
+				return true;
+			}
+			else{
+				return false;
+			}
 		}
-		else{
-			return false;
+		finally {
+			_lock.writeLock().unlock();
 		}
 	}
 

@@ -37,12 +37,18 @@ public class ChunkReference {
 	 * <p>This method will <strong>not</strong> load or generate the chunk. It only
 	 * returns a chunk if it is already loaded in memory.</p>
 	 *
+	 * <p>Must be called on the server thread</p>
+	 *
 	 * @param server the {@link MinecraftServer} used to resolve the world
 	 * @return the loaded {@link WorldChunk}, or {@code null} if the chunk is not currently loaded
-	 * @throws IllegalStateException if the referenced world is not loaded on the server
+	 * @throws IllegalStateException if the referenced world is not loaded on the server OR
+	 *                               if the method is not called on the server thread.
 	 */
 	@Nullable
 	public WorldChunk ToChunk(MinecraftServer server){
+		if (!server.isOnThread()){
+			throw new IllegalStateException("ToChunk must be called on the server thread.");
+		}
 
 		ServerWorld serverWorld = server.getWorld(_world);
 

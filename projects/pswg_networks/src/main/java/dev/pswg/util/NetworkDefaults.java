@@ -24,7 +24,7 @@ public final class NetworkDefaults {
 	public static final ConcurrentHashMap<RangeCacheKey, Set<BlockPos>> RangeCache = new ConcurrentHashMap<>();
 
 	@SuppressWarnings("StaticNonFinalField") // disabled because we want this value to be data driven.
-	public static BiFunction<@NotNull Integer, @NotNull NetworkNode, @NotNull Set<GlobalPos>> DefaultRangeFinder = (range, self) -> {
+	public static volatile BiFunction<@NotNull Integer, @NotNull NetworkNode, @NotNull Set<GlobalPos>> DefaultRangeFinder = (range, self) -> {
 		Objects.requireNonNull(range, "range");
 		Objects.requireNonNull(self, "self");
 
@@ -40,10 +40,10 @@ public final class NetworkDefaults {
 			int centerY = ignored.center.getY();
 			int centerZ = ignored.center.getZ();
 
-			int rangeSquared = ignored.range * ignored.range;
+			long rangeSquared = Math.multiplyExact(ignored.range, (long)ignored.range);
 
-			int diameter = (ignored.range * 2) + 1;
-			int expectedSizeUpperBound = diameter * diameter * diameter;
+			int diameter = Math.multiplyExact(ignored.range, 2) + 1;
+			int expectedSizeUpperBound = Math.multiplyExact(diameter, Math.multiplyExact(diameter, diameter));
 
 			HashSet<BlockPos> blockPositions = new HashSet<>(expectedSizeUpperBound);
 

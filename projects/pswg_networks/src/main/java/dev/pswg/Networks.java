@@ -37,8 +37,7 @@ public final class Networks implements GalaxiesAddon
 	public static final Logger LOGGER = Galaxies.createSubLogger(MODID);
 
 	@Override
-	public void onGalaxiesReady()
-	{
+	public void onGalaxiesReady() {
 		NetworksItems.register();
 		NetworksItemGroups.register();
 		NetworksBlocks.register();
@@ -46,4 +45,12 @@ public final class Networks implements GalaxiesAddon
 
 		LOGGER.info("Module initialized");
 	}
+
+	// Need to figure out how to do this.
+	/*@Override
+	public void onInitialize(){
+		ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+			NetworkTable.CloseAll();
+		});
+	}*/
 }

@@ -1,38 +1,58 @@
 package dev.pswg;
 
+import net.jcip.annotations.GuardedBy;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
+import org.jgrapht.graph.concurrent.AsSynchronizedGraph;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class Network {
+public class Network implements AutoCloseable {
 	@NotNull
-	private final UUID id = UUID.randomUUID();
+	private final ReadWriteLock _lock = new ReentrantReadWriteLock();
+
+	@NotNull
+	private final UUID _id = UUID.randomUUID();
 
 	// For now, we lock networks to a single world as that will make things easer.
 	// ideally we want to support multi, dimension ranges, but not during testing.
 	@NotNull
 	private final RegistryKey<World> _world;
 
-	public Network(@NotNull RegistryKey<World> world){
-		Objects.requireNonNull(world);
-		_world = world;
+	public static Network Create(@NotNull RegistryKey<World> world){
+		Network n = new Network(world, /*private*/ true);
+		NetworkTable.reg.put(n._id, n);
+		return n;
 	}
+
+	private Network(@NotNull RegistryKey<World> world, boolean ignored){
+		_world = Objects.requireNonNull(world);
+	}
+
+	public static @Nullable Network FromId(@NotNull UUID id){
+		Objects.requireNonNull(id, "id");
+		return NetworkTable.reg.get(id);
+	}
+
 
 	//                               We use this so we can store the distance between nodes and don't have to calculate every time. Might not be useful.
 	//                               If not useful, move to DefaultEdge class and SimpleGraph class.
 	@NotNull
-	private final Graph<NetworkNode, DefaultWeightedEdge> _graph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
+	private final Graph<NetworkNode, DefaultWeightedEdge> _graph = new AsSynchronizedGraph<>(new SimpleWeightedGraph<>(DefaultWeightedEdge.class));
 
 	@NotNull
-	public UUID getId(){
-		return id;
+	public UUID get_id(){
+		return _id;
 	}
 
 	/**
@@ -59,40 +79,46 @@ public class Network {
 		Objects.requireNonNull(a, "a");
 		Objects.requireNonNull(b, "b");
 
-		if (a.equals(b)){
-			throw new IllegalArgumentException("Cannot connect a node to itself. a == " + a.GetPos());
+		_lock.writeLock().lock();
+		try{
+			if (a.equals(b)){
+				throw new IllegalArgumentException("Cannot connect a node to itself. a == " + a.GetPos());
+			}
+
+			if (!_graph.containsVertex(a)){
+				AddNode(a);
+			}
+
+			if (!_graph.containsVertex(b)){
+				AddNode(b);
+			}
+
+			if (!b.GetRange().contains(a.GetPos()) && !a.GetRange().contains(b.GetPos())){
+				throw new IllegalStateException(
+						"Nodes are not within range of each other. " +
+						"a == " + a.GetPos() + ", b == " + b.GetPos()
+				);
+			}
+
+			BlockPos pa = a.GetPos().pos();
+			BlockPos pb = b.GetPos().pos();
+
+			double distance = pa.getSquaredDistance(pb);
+
+			DefaultWeightedEdge edge = _graph.addEdge(a, b);
+			if (edge == null){
+				throw new IllegalStateException(
+						"Edge already exists (or cannot be created) between these nodes. " +
+						"a == " + a.GetPos() + ", b == " + b.GetPos()
+				);
+			}
+
+			_graph.setEdgeWeight(edge, distance);
+			return edge;
 		}
-
-		if (!_graph.containsVertex(a)){
-			AddNode(a);
+		finally {
+			_lock.writeLock().unlock();
 		}
-
-		if (!_graph.containsVertex(b)){
-			AddNode(b);
-		}
-
-		if (!b.GetRange().contains(a.GetPos()) && !a.GetRange().contains(b.GetPos())){
-			throw new IllegalStateException(
-					"Nodes are not within range of each other. " +
-					"a == " + a.GetPos() + ", b == " + b.GetPos()
-			);
-		}
-
-		BlockPos pa = a.GetPos().pos();
-		BlockPos pb = b.GetPos().pos();
-
-		double distance = pa.getSquaredDistance(pb);
-
-		DefaultWeightedEdge edge = _graph.addEdge(a, b);
-		if (edge == null){
-			throw new IllegalStateException(
-					"Edge already exists (or cannot be created) between these nodes. " +
-					"a == " + a.GetPos() + ", b == " + b.GetPos()
-			);
-		}
-
-		_graph.setEdgeWeight(edge, distance);
-		return edge;
 	}
 
 	/**
@@ -109,13 +135,18 @@ public class Network {
 	public boolean ClearConnection(@NotNull NetworkNode a, @NotNull NetworkNode b){
 		Objects.requireNonNull(a, "a");
 		Objects.requireNonNull(b, "b");
+		_lock.writeLock().lock();
+		try{
+			DefaultWeightedEdge edge = _graph.getEdge(a, b);
+			if (edge == null){
+				return false;
+			}
 
-		DefaultWeightedEdge edge = _graph.getEdge(a, b);
-		if (edge == null){
-			return false;
+			return _graph.removeEdge(edge);
 		}
-
-		return _graph.removeEdge(edge);
+		finally {
+			_lock.writeLock().unlock();
+		}
 	}
 
 
@@ -138,8 +169,28 @@ public class Network {
 	 * @throws IllegalStateException if the node already exists in the graph
 	 */
 	public void AddNode(@NotNull NetworkNode node){
-		Objects.requireNonNull(node);
+		Objects.requireNonNull(node, "node");
+		_lock.writeLock().lock();
+		try {
+			AddNodeInternal(node);
+		} finally {
+			_lock.writeLock().unlock();
+		}
+	}
 
+	/**
+	 * Adds a {@link NetworkNode} to this network.
+	 *
+	 * <p><b color=Red>Thread-Safety Warning:</b> This method is <b>not thread-safe</b> on its own.
+	 * The caller <b>must</b> hold the network’s write lock before invoking this method.
+	 * Failing to do so may result in data races and corrupted internal state.</p>
+	 */
+	@GuardedBy("_lock")
+	private void AddNodeInternal(@NotNull NetworkNode node){
+		assert ((ReentrantReadWriteLock)_lock).isWriteLockedByCurrentThread()
+				: "AddNodeInternal must be called while holding the write lock";
+
+		Objects.requireNonNull(node, "node");
 		if (!node.GetDimension().equals(_world)){
 			throw new IllegalArgumentException("Node dimension does not match Network world.");
 		}
@@ -154,7 +205,7 @@ public class Network {
 			throw new IllegalStateException("Node already exists in graph.");
 		}
 
-		if (!node.SetNetwork(id))
+		if (!node.SetNetwork(_id))
 			throw new AssertionError("We just checked that the node has no network, now its network is " + node.GetNetworkId());
 
 
@@ -185,30 +236,36 @@ public class Network {
 	 */
 	public boolean RemoveNode(@NotNull NetworkNode node){
 		Objects.requireNonNull(node, "node");
+		_lock.writeLock().lock();
+		try {
 
-		boolean removed = _graph.removeVertex(node);
-		if (!removed){
-			return false;
-		}
+			boolean removed = _graph.removeVertex(node);
+			if (!removed){
+				return false;
+			}
 
-		// Update range index + range cache
-		Set<GlobalPos> range = node.GetRange();
-		for (GlobalPos pos : range){
-			List<NetworkNode> nodesHere = _rangeData.get(pos);
-			if (nodesHere != null){
-				nodesHere.remove(node);
+			// Update range index + range cache
+			Set<GlobalPos> range = node.GetRange();
+			for (GlobalPos pos : range){
+				List<NetworkNode> nodesHere = _rangeData.get(pos);
+				if (nodesHere != null){
+					nodesHere.remove(node);
 
-				if (nodesHere.isEmpty()){
-					_rangeData.remove(pos);
+					if (nodesHere.isEmpty()){
+						_rangeData.remove(pos);
+					}
 				}
 			}
-		}
 
-		return true;
+			return true;
+
+		} finally {
+			_lock.writeLock().unlock();
+		}
 	}
 
 	@NotNull
-	private final HashMap<GlobalPos, List<NetworkNode>> _rangeData = new HashMap<>();
+	private final ConcurrentHashMap<GlobalPos, List<NetworkNode>> _rangeData = new ConcurrentHashMap<>();
 
 	/**
 	 * Returns the set of all block positions covered by this network.
@@ -221,7 +278,13 @@ public class Network {
 	 */
 	@NotNull
 	public Set<GlobalPos> GetRange(){
-		return Set.copyOf(_rangeData.keySet());
+		_lock.readLock().lock();
+		try{
+			return Set.copyOf(_rangeData.keySet());
+		}
+		finally {
+			_lock.readLock().unlock();
+		}
 	}
 
 	/**
@@ -239,12 +302,20 @@ public class Network {
 	public Set<NetworkNode> NodesAt(@NotNull GlobalPos pos){
 		Objects.requireNonNull(pos, "pos");
 
-		List<NetworkNode> nodesHere = _rangeData.get(pos);
-		if (nodesHere == null){
-			return Set.of();
+		_lock.readLock().lock();
+		try{
+			List<NetworkNode> nodesHere = _rangeData.get(pos);
+			if (nodesHere == null){
+				return Set.of();
+			}
+			return Set.copyOf(nodesHere);
+		} finally {
+			_lock.readLock().unlock();
 		}
-
-		return Set.copyOf(nodesHere);
 	}
 
+	@Override
+	public void close() throws Exception {
+		NetworkTable.reg.remove(_id);
+	}
 }
