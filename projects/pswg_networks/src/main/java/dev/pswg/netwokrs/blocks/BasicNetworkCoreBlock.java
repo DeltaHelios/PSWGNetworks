@@ -29,7 +29,7 @@ public class BasicNetworkCoreBlock extends BlockWithEntity {
 
 	@Override
 	public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-		return new BasicNetworkCoreBlockEntity(, pos, state);
+		return new BasicNetworkCoreBlockEntity(pos, state);
 	}
 
 
