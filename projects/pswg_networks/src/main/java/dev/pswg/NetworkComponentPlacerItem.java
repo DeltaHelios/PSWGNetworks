@@ -39,12 +39,12 @@ public abstract class NetworkComponentPlacerItem extends BlockItem {
 		PlayerEntity player = context.getPlayer();
 		if (player == null) { // We may want to do away with this check to allow compatibility with things like Create's deployer.
 							  // I don't know how that works though.
-			return ActionResult.PASS;
+			return ActionResult.FAIL;
 		}
 
 		// make sure the player is seeking.
 		if (!player.isSneaking()) {
-			return ActionResult.PASS;
+			return super.useOnBlock(context);
 		}
 
 		// Make sure there is a NetworkComponent at that location.

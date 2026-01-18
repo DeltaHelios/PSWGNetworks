@@ -8,6 +8,8 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 public class BasicNetworkComponentBlock extends BlockWithEntity {
+	public static final String NAME = "basic_network_componant";
+
 	public BasicNetworkComponentBlock(Settings settings) {
 		super(settings);
 	}

@@ -25,27 +25,4 @@ public class BasicNetworkCoreBlock extends NetworkBlock {
 	protected NetworkComponentBlockEntity createNetworkComponent(BlockPos pos, BlockState state) {
 		return new BasicNetworkCoreBlockEntity(pos, state);
 	}
-
-	/*public BasicNetworkCoreBlock(
-			BlockEntityType<?> type,
-			BlockPos pos,
-			BlockState state,
-			@Nullable UUID networkId) {
-		super(type, pos, state);
-
-		@Nullable Network target = null;
-
-
-		if(networkId != null){
-			target = Network.FromId(networkId);
-		}
-
-		if(target == null){
-			assert world != null : "NetworkConstructor should have validated that world is not null.";
-
-			target = Network.Create(world.getRegistryKey());
-		}
-
-		target.AddNode(node);
-	}*/
 }
