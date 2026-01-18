@@ -50,7 +50,7 @@ public final class Networks implements GalaxiesAddon
 	}
 
 	public static final ComponentType<UUID> UUID_COMPONENT_TYPE = registerDataComponent(
-			"UUID", builder -> builder.codec(Uuids.CODEC)
+			"uuid", builder -> builder.codec(Uuids.CODEC)
 	);
 
 	@Override

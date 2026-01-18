@@ -8,7 +8,7 @@ import net.minecraft.block.Block;
 
 public final class NetworksBlocks
 {
-	public static final Block BASIC_NETWORK_CORE = Registrar.block(
+	public static final Block BASIC_NETWORK_CORE = Registrar.blockWithoutItem(
 			BasicNetworkCoreBlock.ID,
 			BasicNetworkCoreBlock::new,
 			AbstractBlock.Settings
