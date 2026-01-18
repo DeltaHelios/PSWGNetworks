@@ -1,4 +1,4 @@
-package dev.pswg.netwokrs.items;
+package dev.pswg.networks.items;
 
 public class BasicNetworkComponentItem {
 }

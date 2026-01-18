@@ -1,7 +1,7 @@
 package dev.pswg.container;
 
 import dev.pswg.Networks;
-import dev.pswg.netwokrs.items.BasicNetworkCoreItem;
+import dev.pswg.networks.items.BasicNetworkCoreItem;
 import dev.pswg.registry.Registrar;
 import net.minecraft.item.Item;
 

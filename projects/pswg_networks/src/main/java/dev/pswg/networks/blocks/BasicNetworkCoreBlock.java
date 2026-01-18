@@ -1,10 +1,10 @@
-package dev.pswg.netwokrs.blocks;
+package dev.pswg.networks.blocks;
 
 import com.mojang.serialization.MapCodec;
 import dev.pswg.Networks;
-import dev.pswg.netwokrs.NetworkBlock;
-import dev.pswg.netwokrs.NetworkComponent;
-import dev.pswg.netwokrs.blockEntities.BasicNetworkCoreBlockEntity;
+import dev.pswg.networks.NetworkBlock;
+import dev.pswg.networks.NetworkComponent;
+import dev.pswg.networks.blockEntities.BasicNetworkCoreBlockEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.util.Identifier;

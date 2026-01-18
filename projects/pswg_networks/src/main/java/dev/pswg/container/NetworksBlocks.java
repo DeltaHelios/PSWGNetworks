@@ -1,7 +1,7 @@
 package dev.pswg.container;
 
 import dev.pswg.Networks;
-import dev.pswg.netwokrs.blocks.BasicNetworkCoreBlock;
+import dev.pswg.networks.blocks.BasicNetworkCoreBlock;
 import dev.pswg.registry.Registrar;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;

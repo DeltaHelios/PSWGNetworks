@@ -1,7 +1,7 @@
 package dev.pswg;
 
 import dev.pswg.api.GalaxiesClientAddon;
-import dev.pswg.netwokrs.NetworkComponentPlacer;
+import dev.pswg.networks.NetworkComponentPlacer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.minecraft.item.Item;
 import net.minecraft.text.Text;

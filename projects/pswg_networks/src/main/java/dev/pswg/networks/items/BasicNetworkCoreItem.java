@@ -1,7 +1,7 @@
-package dev.pswg.netwokrs.items;
+package dev.pswg.networks.items;
 
 import dev.pswg.container.NetworksBlocks;
-import dev.pswg.netwokrs.NetworkComponentPlacer;
+import dev.pswg.networks.NetworkComponentPlacer;
 
 public class BasicNetworkCoreItem extends NetworkComponentPlacer {
 

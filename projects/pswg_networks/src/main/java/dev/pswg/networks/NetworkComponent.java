@@ -1,4 +1,4 @@
-package dev.pswg.netwokrs;
+package dev.pswg.networks;
 
 import dev.pswg.Network;
 import dev.pswg.NetworkNode;

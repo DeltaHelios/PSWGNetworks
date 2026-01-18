@@ -1,4 +1,4 @@
-package dev.pswg.netwokrs;
+package dev.pswg.networks;
 
 import dev.pswg.NetworkNode;
 import dev.pswg.Networks;
@@ -16,7 +16,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import javax.swing.*;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;

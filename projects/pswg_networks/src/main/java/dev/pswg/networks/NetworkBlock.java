@@ -1,6 +1,5 @@
-package dev.pswg.netwokrs;
+package dev.pswg.networks;
 
-import dev.pswg.netwokrs.blockEntities.BasicNetworkCoreBlockEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.entity.BlockEntity;
