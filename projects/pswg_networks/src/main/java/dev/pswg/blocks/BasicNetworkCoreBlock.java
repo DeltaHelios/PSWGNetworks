@@ -1,18 +1,16 @@
-package dev.pswg.networks.blocks;
+package dev.pswg.blocks;
 
 import com.mojang.serialization.MapCodec;
-import dev.pswg.Networks;
-import dev.pswg.networks.NetworkBlock;
-import dev.pswg.networks.NetworkComponent;
-import dev.pswg.networks.blockEntities.BasicNetworkCoreBlockEntity;
+import dev.pswg.NetworkBlock;
+import dev.pswg.NetworkComponentBlockEntity;
+import dev.pswg.blockEntities.BasicNetworkCoreBlockEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 
 public class BasicNetworkCoreBlock extends NetworkBlock {
 
-	public static final Identifier ID = Networks.id("basic_network_core");
+	public static final String NAME = "basic_network_core";
 
 	public BasicNetworkCoreBlock(Settings settings) {
 		super(settings);
@@ -24,7 +22,7 @@ public class BasicNetworkCoreBlock extends NetworkBlock {
 	}
 
 	@Override
-	protected NetworkComponent createNetworkComponent(BlockPos pos, BlockState state) {
+	protected NetworkComponentBlockEntity createNetworkComponent(BlockPos pos, BlockState state) {
 		return new BasicNetworkCoreBlockEntity(pos, state);
 	}
 

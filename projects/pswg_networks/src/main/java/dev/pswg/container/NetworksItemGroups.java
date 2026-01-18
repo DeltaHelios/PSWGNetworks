@@ -12,7 +12,7 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 
-public class NetworksItemGroups
+public final class NetworksItemGroups
 {
 	public static final RegistryKey<ItemGroup> NETWORKS_GROUP_KEY = registerGroup("networks");
 	public static final ItemGroup NETWORKS_GROUP = FabricItemGroup.builder().icon(() -> new ItemStack(Blocks.BLUE_STAINED_GLASS)).displayName(Text.translatable("pswg_networks.networks_group")).build();

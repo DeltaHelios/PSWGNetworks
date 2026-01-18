@@ -1,7 +1,7 @@
-package dev.pswg.networks.blockEntities;
+package dev.pswg.blockEntities;
 
 import dev.pswg.Network;
-import dev.pswg.networks.NetworkComponent;
+import dev.pswg.NetworkComponentBlockEntity;
 import dev.pswg.Networks;
 import dev.pswg.container.NetworksBlockEntities;
 import net.minecraft.block.BlockState;
@@ -14,10 +14,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
-public final class BasicNetworkCoreBlockEntity extends NetworkComponent {
+public final class BasicNetworkCoreBlockEntity extends NetworkComponentBlockEntity {
 
 	public BasicNetworkCoreBlockEntity(BlockPos pos, BlockState state) {
-		super(NetworksBlockEntities.BASIC_NETWORK_CORE, pos, state);
+		super(NetworksBlockEntities.BASIC_NETWORK_CORE_BLOCK_ENTITY, pos, state);
 	}
 
 	@Override

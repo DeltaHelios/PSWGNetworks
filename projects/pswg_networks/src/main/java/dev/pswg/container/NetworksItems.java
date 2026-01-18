@@ -1,11 +1,11 @@
 package dev.pswg.container;
 
 import dev.pswg.Networks;
-import dev.pswg.networks.items.BasicNetworkCoreItem;
+import dev.pswg.blocks.BasicNetworkCoreBlock;
+import dev.pswg.items.BasicNetworkCoreItem;
 import dev.pswg.registry.Registrar;
 import net.minecraft.item.Item;
 
-import java.util.HashSet;
 import java.util.function.Function;
 
 public final class NetworksItems
@@ -26,10 +26,8 @@ public final class NetworksItems
 
 	}
 
-	public static HashSet<Item> AllItems = new HashSet<>();
-
-	public static final Item BASIC_NETWORK_CORE = registerItem(
-			"basic_network_core",
+	public static final Item BASIC_NETWORK_CORE_ITEM = registerItem(
+			BasicNetworkCoreBlock.NAME,
              BasicNetworkCoreItem::new,
              new Item.Settings()
 	);

@@ -1,4 +1,4 @@
-package dev.pswg.networks;
+package dev.pswg;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
@@ -22,7 +22,7 @@ public abstract class NetworkBlock extends BlockWithEntity {
 		return createNetworkComponent(pos, state);
 	}
 
-	protected abstract NetworkComponent createNetworkComponent(BlockPos pos, BlockState state);
+	protected abstract NetworkComponentBlockEntity createNetworkComponent(BlockPos pos, BlockState state);
 
 	@Override
 	protected void onStateReplaced(BlockState state, ServerWorld world, BlockPos pos, boolean moved) {
@@ -34,7 +34,7 @@ public abstract class NetworkBlock extends BlockWithEntity {
 			return;
 		}
 
-		if (entity instanceof NetworkComponent component) {
+		if (entity instanceof NetworkComponentBlockEntity component) {
 			component.onStateReplaced(state, world, pos, moved);
 			return;
 		}
@@ -53,7 +53,7 @@ public abstract class NetworkBlock extends BlockWithEntity {
 			return;
 		}
 
-		if (entity instanceof NetworkComponent component) {
+		if (entity instanceof NetworkComponentBlockEntity component) {
 			component.onPlaced(world, pos, state, placer, itemStack);
 			return;
 		}
@@ -72,7 +72,7 @@ public abstract class NetworkBlock extends BlockWithEntity {
 			return;
 		}
 
-		if (entity instanceof NetworkComponent component) {
+		if (entity instanceof NetworkComponentBlockEntity component) {
 			component.onBroken(world, pos, state);
 			return;
 		}

@@ -1,15 +1,15 @@
 package dev.pswg.container;
 
 import dev.pswg.Networks;
-import dev.pswg.networks.blocks.BasicNetworkCoreBlock;
+import dev.pswg.blocks.BasicNetworkCoreBlock;
 import dev.pswg.registry.Registrar;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 
 public final class NetworksBlocks
 {
-	public static final Block BASIC_NETWORK_CORE = Registrar.blockWithoutItem(
-			BasicNetworkCoreBlock.ID,
+	public static final Block BASIC_NETWORK_CORE_BLOCK = Registrar.blockWithoutItem(
+			Networks.id(BasicNetworkCoreBlock.NAME),
 			BasicNetworkCoreBlock::new,
 			AbstractBlock.Settings
                 .create()

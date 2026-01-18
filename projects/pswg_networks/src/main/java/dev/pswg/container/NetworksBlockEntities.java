@@ -1,7 +1,8 @@
 package dev.pswg.container;
 
-import dev.pswg.networks.blockEntities.BasicNetworkCoreBlockEntity;
-import dev.pswg.networks.blocks.BasicNetworkCoreBlock;
+import dev.pswg.Networks;
+import dev.pswg.blockEntities.BasicNetworkCoreBlockEntity;
+import dev.pswg.blocks.BasicNetworkCoreBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.registry.Registries;
@@ -9,11 +10,11 @@ import net.minecraft.registry.Registry;
 
 public final class NetworksBlockEntities
 {
-	public static final BlockEntityType<BasicNetworkCoreBlockEntity> BASIC_NETWORK_CORE = Registry.register(
+	public static final BlockEntityType<BasicNetworkCoreBlockEntity> BASIC_NETWORK_CORE_BLOCK_ENTITY = Registry.register(
 			Registries.BLOCK_ENTITY_TYPE,
-			BasicNetworkCoreBlock.ID,
+			Networks.id(BasicNetworkCoreBlock.NAME),
 			FabricBlockEntityTypeBuilder
-					.create(BasicNetworkCoreBlockEntity::new, NetworksBlocks.BASIC_NETWORK_CORE)
+					.create(BasicNetworkCoreBlockEntity::new, NetworksBlocks.BASIC_NETWORK_CORE_BLOCK)
 					.build()
 	);
 	public static void register()

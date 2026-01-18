@@ -1,8 +1,5 @@
-package dev.pswg.networks;
+package dev.pswg;
 
-import dev.pswg.Network;
-import dev.pswg.NetworkNode;
-import dev.pswg.Networks;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -18,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
-public abstract class NetworkComponent extends BlockEntity {
+public abstract class NetworkComponentBlockEntity extends BlockEntity {
 
 	@Nullable
 	public NetworkNode node;
@@ -31,7 +28,7 @@ public abstract class NetworkComponent extends BlockEntity {
 	}
 
 
-	public NetworkComponent(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+	public NetworkComponentBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 	}
 
@@ -39,7 +36,7 @@ public abstract class NetworkComponent extends BlockEntity {
 		Objects.requireNonNull(world);
 		Objects.requireNonNull(itemStack);
 
-		if (!(itemStack.getItem() instanceof NetworkComponentPlacer)){
+		if (!(itemStack.getItem() instanceof NetworkComponentPlacerItem)){
 			// TODO: no idea what to do here.
 		}
 

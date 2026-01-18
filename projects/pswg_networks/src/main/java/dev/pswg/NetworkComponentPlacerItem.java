@@ -1,7 +1,5 @@
-package dev.pswg.networks;
+package dev.pswg;
 
-import dev.pswg.NetworkNode;
-import dev.pswg.Networks;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.component.type.TooltipDisplayComponent;
@@ -21,9 +19,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public abstract class NetworkComponentPlacer extends BlockItem {
+public abstract class NetworkComponentPlacerItem extends BlockItem {
 
-	public NetworkComponentPlacer(Block block, Settings settings) {
+	public NetworkComponentPlacerItem(Block block, Settings settings) {
 		super(block, settings);
 	}
 
@@ -52,7 +50,7 @@ public abstract class NetworkComponentPlacer extends BlockItem {
 		// Make sure there is a NetworkComponent at that location.
 		BlockPos networkPos = context.getBlockPos();
 		BlockEntity blockEntity = world.getBlockEntity(networkPos);
-		if (!(blockEntity instanceof NetworkComponent networkComponent)) {
+		if (!(blockEntity instanceof NetworkComponentBlockEntity networkComponent)) {
 			return ActionResult.PASS;
 		}
 

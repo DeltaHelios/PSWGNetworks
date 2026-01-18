@@ -1,7 +1,6 @@
 package dev.pswg;
 
 import dev.pswg.api.GalaxiesClientAddon;
-import dev.pswg.networks.NetworkComponentPlacer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.minecraft.item.Item;
 import net.minecraft.text.Text;
@@ -19,7 +18,7 @@ public class NetworksClient implements GalaxiesClientAddon
 	{
 		ItemTooltipCallback.EVENT.register((stack, tooltipContext, tooltipType, lines) -> {
 			Item item = stack.getItem();
-			if (!(item instanceof NetworkComponentPlacer)) {
+			if (!(item instanceof NetworkComponentPlacerItem)) {
 				return;
 			}
 

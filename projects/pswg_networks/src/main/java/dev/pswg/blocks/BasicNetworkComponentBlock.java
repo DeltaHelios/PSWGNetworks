@@ -1,4 +1,4 @@
-package dev.pswg.networks.blocks;
+package dev.pswg.blocks;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.BlockState;
