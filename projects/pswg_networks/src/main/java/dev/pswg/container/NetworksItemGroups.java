@@ -15,7 +15,11 @@ import net.minecraft.text.Text;
 public final class NetworksItemGroups
 {
 	public static final RegistryKey<ItemGroup> NETWORKS_GROUP_KEY = registerGroup("networks");
-	public static final ItemGroup NETWORKS_GROUP = FabricItemGroup.builder().icon(() -> new ItemStack(Blocks.BLUE_STAINED_GLASS)).displayName(Text.translatable("pswg_networks.networks_group")).build();
+	public static final ItemGroup NETWORKS_GROUP = FabricItemGroup
+			.builder()
+			.icon(() -> new ItemStack(Blocks.BLUE_STAINED_GLASS))
+			.displayName(Text.translatable("pswg_networks.networks_group"))
+			.build();
 
 	private static RegistryKey<ItemGroup> registerGroup(String id)
 	{
@@ -26,6 +30,7 @@ public final class NetworksItemGroups
 	{
 		Registry.register(Registries.ITEM_GROUP, NETWORKS_GROUP_KEY, NETWORKS_GROUP);
 
-		ItemGroupEvents.modifyEntriesEvent(NETWORKS_GROUP_KEY).register(itemGroup -> itemGroup.add(Blocks.BLUE_STAINED_GLASS));
+		ItemGroupEvents.modifyEntriesEvent(NETWORKS_GROUP_KEY)
+		               .register(itemGroup -> itemGroup.add(Blocks.BLUE_STAINED_GLASS));
 	}
 }
