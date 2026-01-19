@@ -33,20 +33,21 @@ public abstract class NetworkComponentBlockEntity extends BlockEntity {
 	}
 
 	public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-		Objects.requireNonNull(world);
-		Objects.requireNonNull(itemStack);
-
 		if (!(itemStack.getItem() instanceof NetworkComponentPlacerItem)){
-			// TODO: no idea what to do here.
+			Networks.LOGGER.info("Attempted to pull network ID from ItemStack, but item is not a NetworkComponentPlacerItem");
+			return;
 		}
+
+		node = NetworkNode.Create(new GlobalPos(world.getRegistryKey(), pos));
 
 		@Nullable UUID networkId = itemStack.get(Networks.UUID_COMPONENT_TYPE);
 
-		if(networkId != null){
-			node = NetworkNode.Create(new GlobalPos(world.getRegistryKey(), pos));
-
-			Network.FromId(networkId);
+		if(networkId == null){
+			Networks.LOGGER.info("Attempted to assign Network ID, but got null from the item stack.");
+			return;
 		}
+
+		node.SetNetwork(networkId);
 
 		// attempt to connect to the network.
 	}
@@ -58,8 +59,8 @@ public abstract class NetworkComponentBlockEntity extends BlockEntity {
 
 	public void onStateReplaced(BlockState state, ServerWorld world, BlockPos pos, boolean moved) {
 		if(moved){
-			// disconnect from the network, attempt to reconnect based on new blockPos.
-			// on a failure to reconnect, dispose of node.
+			//TODO: need to set this up.
+			//      If moved is true we need to attempt to reconnect from our new position.
 		}
 	}
 }

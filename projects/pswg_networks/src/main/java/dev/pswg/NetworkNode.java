@@ -17,14 +17,14 @@ import java.util.function.BiFunction;
 
 public class NetworkNode implements AutoCloseable {
 	@NotNull
-	private final UUID _id = UUID.randomUUID();
+	private final UUID idPrivate = UUID.randomUUID();
 
 	//TODO: make this data driven instead of hard coded.
 	@SuppressWarnings("FieldCanBeLocal")
-	private final int _range = 10;
+	private final int rangePrivate = 10;
 
 	@NotNull
-	private final GlobalPos _location;
+	private final GlobalPos locationPrivate;
 
 	/**
 	 * The unique identifier of the network this node is a part of.
@@ -33,10 +33,10 @@ public class NetworkNode implements AutoCloseable {
 	 */
 	@Nullable
 	@GuardedBy("Network._lock")
-	private UUID _networkId = null;
+	private UUID networkIdPrivate = null;
 
 	@NotNull
-	private final ReadWriteLock _lock = new ReentrantReadWriteLock();
+	private final ReadWriteLock lockPrivate = new ReentrantReadWriteLock();
 
 	/**
 	 * Returns the identifier of the network this object belongs to.
@@ -48,12 +48,12 @@ public class NetworkNode implements AutoCloseable {
 	 */
 	@Nullable
 	public UUID GetNetworkId(){
-		_lock.readLock().lock();
+		lockPrivate.readLock().lock();
 		try{
-			return _networkId;
+			return networkIdPrivate;
 		}
 		finally {
-			_lock.readLock().unlock();
+			lockPrivate.readLock().unlock();
 		}
 	}
 
@@ -74,10 +74,10 @@ public class NetworkNode implements AutoCloseable {
 	 */
 	boolean SetNetwork(UUID NetworkID){
 		Objects.requireNonNull(NetworkID, "NetworkID");
-		_lock.writeLock().lock();
+		lockPrivate.writeLock().lock();
 		try{
-			if(_networkId == null){
-				_networkId = NetworkID;
+			if(networkIdPrivate == null){
+				networkIdPrivate = NetworkID;
 				return true;
 			}
 			else{
@@ -85,49 +85,49 @@ public class NetworkNode implements AutoCloseable {
 			}
 		}
 		finally {
-			_lock.writeLock().unlock();
+			lockPrivate.writeLock().unlock();
 		}
 	}
 
 	@NotNull
 	public RegistryKey<World> GetDimension(){
-		return _location.dimension();
+		return locationPrivate.dimension();
 	}
 
 	@NotNull
 	public BlockPos GetBlockPos(){
-		return _location.pos();
+		return locationPrivate.pos();
 	}
 
 	@NotNull
 	public GlobalPos GetPos(){
-		return _location;
+		return locationPrivate;
 	}
 
 	public static @Nullable NetworkNode FromId(@NotNull UUID id){
 		Objects.requireNonNull(id);
-		return NetworkTable._Nodes.get(id);
+		return NetworkTable.NodesPackagePrivate.get(id);
 	}
 
 
 	public static @NotNull NetworkNode Create(@NotNull GlobalPos location){
 		NetworkNode output = new NetworkNode(location);
-		NetworkTable._Nodes.put(output._id, output);
+		NetworkTable.NodesPackagePrivate.put(output.idPrivate, output);
 		return output;
 	}
 
 	private NetworkNode(@NotNull GlobalPos location){
 		Objects.requireNonNull(location);
-		_location = location;
+		locationPrivate = location;
 	}
 
-	private final BiFunction<@NotNull Integer, @NotNull NetworkNode, @NotNull Set<GlobalPos>> _rangeFinder = NetworkDefaults.DefaultRangeFinder;
+	private final BiFunction<@NotNull Integer, @NotNull NetworkNode, @NotNull Set<GlobalPos>> rangeFinderPrivate = NetworkDefaults.DefaultRangeFinder;
 
 	public Set<GlobalPos> GetRange(){
-		return _rangeFinder.apply(_range, this);
+		return rangeFinderPrivate.apply(rangePrivate, this);
 	}
 	@Override
 	public void close() {
-		NetworkTable._Nodes.remove(_id);
+		NetworkTable.NodesPackagePrivate.remove(idPrivate);
 	}
 }

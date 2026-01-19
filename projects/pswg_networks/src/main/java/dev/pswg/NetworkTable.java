@@ -9,9 +9,9 @@ public final class NetworkTable {
 	private NetworkTable() {}
 
 	@NotNull
-	static ConcurrentHashMap<@NotNull UUID, @NotNull Network> _Networks = new ConcurrentHashMap<>();
+	static ConcurrentHashMap<@NotNull UUID, @NotNull Network> NetworksPackagePrivate = new ConcurrentHashMap<>();
 	private static void CloseNetworks(){
-		ArrayList<Network> snapshot = new ArrayList<>(_Networks.values());
+		ArrayList<Network> snapshot = new ArrayList<>(NetworksPackagePrivate.values());
 
 		for (Network network : snapshot){
 			try{
@@ -22,13 +22,13 @@ public final class NetworkTable {
 		}
 
 		// If close() removed correctly, this should now be empty.
-		_Networks.clear();
+		NetworksPackagePrivate.clear();
 	}
 
-	static ConcurrentHashMap<@NotNull UUID, @NotNull NetworkNode> _Nodes = new ConcurrentHashMap<>();
+	static ConcurrentHashMap<@NotNull UUID, @NotNull NetworkNode> NodesPackagePrivate = new ConcurrentHashMap<>();
 
 	private static void CloseNodes(){
-		ArrayList<NetworkNode> snapshot = new ArrayList<>(_Nodes.values());
+		ArrayList<NetworkNode> snapshot = new ArrayList<>(NodesPackagePrivate.values());
 
 		for (NetworkNode node : snapshot){
 			try{
@@ -39,7 +39,7 @@ public final class NetworkTable {
 		}
 
 		// If close() removed correctly, this should now be empty.
-		_Nodes.clear();
+		NodesPackagePrivate.clear();
 	}
 
 	public static void CloseAll(){

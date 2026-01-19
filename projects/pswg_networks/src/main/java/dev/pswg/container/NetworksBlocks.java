@@ -7,7 +7,8 @@ import dev.pswg.registry.Registrar;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 
-public final class NetworksBlocks
+@SuppressWarnings("NonFinalUtilityClass")
+public class NetworksBlocks
 {
 	public static final Block BASIC_NETWORK_CORE_BLOCK = Registrar.blockWithoutItem(
 			Networks.id(BasicNetworkCoreBlock.NAME),

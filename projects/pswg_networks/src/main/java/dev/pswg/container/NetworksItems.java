@@ -10,7 +10,8 @@ import net.minecraft.item.Item;
 
 import java.util.function.Function;
 
-public final class NetworksItems
+@SuppressWarnings("NonFinalUtilityClass")
+public class NetworksItems
 {
 	public static Item registerSimpleItem(String key)
 	{

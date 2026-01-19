@@ -19,40 +19,40 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Network implements AutoCloseable {
 	@NotNull
-	private final ReadWriteLock _lock = new ReentrantReadWriteLock();
+	private final ReadWriteLock lockPrivate = new ReentrantReadWriteLock();
 
 	@NotNull
-	private final UUID _id = UUID.randomUUID();
+	private final UUID idPrivate = UUID.randomUUID();
 
 	// For now, we lock networks to a single world as that will make things easer.
 	// ideally we want to support multi, dimension ranges, but not during testing.
 	@NotNull
-	private final RegistryKey<World> _world;
+	private final RegistryKey<World> worldPrivate;
 
 	public static Network Create(@NotNull RegistryKey<World> world){
 		Network n = new Network(world);
-		NetworkTable._Networks.put(n._id, n);
+		NetworkTable.NetworksPackagePrivate.put(n.idPrivate, n);
 		return n;
 	}
 
 	private Network(@NotNull RegistryKey<World> world){
-		_world = Objects.requireNonNull(world);
+		worldPrivate = Objects.requireNonNull(world);
 	}
 
 	public static @Nullable Network FromId(@NotNull UUID id){
 		Objects.requireNonNull(id, "id");
-		return NetworkTable._Networks.get(id);
+		return NetworkTable.NetworksPackagePrivate.get(id);
 	}
 
 
 	//                               We use this so we can store the distance between nodes and don't have to calculate every time. Might not be useful.
 	//                               If not useful, move to DefaultEdge class and SimpleGraph class.
 	@NotNull
-	private final Graph<NetworkNode, DefaultWeightedEdge> _graph = new AsSynchronizedGraph<>(new SimpleWeightedGraph<>(DefaultWeightedEdge.class));
+	private final Graph<NetworkNode, DefaultWeightedEdge> graphPrivate = new AsSynchronizedGraph<>(new SimpleWeightedGraph<>(DefaultWeightedEdge.class));
 
 	@NotNull
 	public UUID getId(){
-		return _id;
+		return idPrivate;
 	}
 
 	/**
@@ -79,17 +79,17 @@ public class Network implements AutoCloseable {
 		Objects.requireNonNull(a, "a");
 		Objects.requireNonNull(b, "b");
 
-		_lock.writeLock().lock();
+		lockPrivate.writeLock().lock();
 		try{
 			if (a.equals(b)){
 				throw new IllegalArgumentException("Cannot connect a node to itself. a == " + a.GetPos());
 			}
 
-			if (!_graph.containsVertex(a)){
+			if (!graphPrivate.containsVertex(a)){
 				AddNode(a);
 			}
 
-			if (!_graph.containsVertex(b)){
+			if (!graphPrivate.containsVertex(b)){
 				AddNode(b);
 			}
 
@@ -105,7 +105,7 @@ public class Network implements AutoCloseable {
 
 			double distance = pa.getSquaredDistance(pb);
 
-			DefaultWeightedEdge edge = _graph.addEdge(a, b);
+			DefaultWeightedEdge edge = graphPrivate.addEdge(a, b);
 			if (edge == null){
 				throw new IllegalStateException(
 						"Edge already exists (or cannot be created) between these nodes. " +
@@ -113,11 +113,11 @@ public class Network implements AutoCloseable {
 				);
 			}
 
-			_graph.setEdgeWeight(edge, distance);
+			graphPrivate.setEdgeWeight(edge, distance);
 			return edge;
 		}
 		finally {
-			_lock.writeLock().unlock();
+			lockPrivate.writeLock().unlock();
 		}
 	}
 
@@ -135,17 +135,17 @@ public class Network implements AutoCloseable {
 	public boolean ClearConnection(@NotNull NetworkNode a, @NotNull NetworkNode b){
 		Objects.requireNonNull(a, "a");
 		Objects.requireNonNull(b, "b");
-		_lock.writeLock().lock();
+		lockPrivate.writeLock().lock();
 		try{
-			DefaultWeightedEdge edge = _graph.getEdge(a, b);
+			DefaultWeightedEdge edge = graphPrivate.getEdge(a, b);
 			if (edge == null){
 				return false;
 			}
 
-			return _graph.removeEdge(edge);
+			return graphPrivate.removeEdge(edge);
 		}
 		finally {
-			_lock.writeLock().unlock();
+			lockPrivate.writeLock().unlock();
 		}
 	}
 
@@ -168,11 +168,11 @@ public class Network implements AutoCloseable {
 	 */
 	public void AddNode(@NotNull NetworkNode node){
 		Objects.requireNonNull(node, "node");
-		_lock.writeLock().lock();
+		lockPrivate.writeLock().lock();
 		try {
 			AddNodeInternal(node);
 		} finally {
-			_lock.writeLock().unlock();
+			lockPrivate.writeLock().unlock();
 		}
 	}
 
@@ -185,11 +185,11 @@ public class Network implements AutoCloseable {
 	 */
 	@GuardedBy("_lock")
 	private void AddNodeInternal(@NotNull NetworkNode node){
-		assert ((ReentrantReadWriteLock)_lock).isWriteLockedByCurrentThread()
+		assert ((ReentrantReadWriteLock)lockPrivate).isWriteLockedByCurrentThread()
 				: "AddNodeInternal must be called while holding the write lock";
 
 		Objects.requireNonNull(node, "node");
-		if (!node.GetDimension().equals(_world)){
+		if (!node.GetDimension().equals(worldPrivate)){
 			throw new IllegalArgumentException("Node dimension does not match Network world.");
 		}
 
@@ -199,17 +199,17 @@ public class Network implements AutoCloseable {
 			);
 		}
 
-		if (!_graph.addVertex(node)){
+		if (!graphPrivate.addVertex(node)){
 			throw new IllegalStateException("Node already exists in graph.");
 		}
 
-		if (!node.SetNetwork(_id))
+		if (!node.SetNetwork(idPrivate))
 			throw new AssertionError("We just checked that the node has no network, now its network is " + node.GetNetworkId());
 
 
 		Set<GlobalPos> range = node.GetRange();
 		for (GlobalPos pos : range){
-			List<NetworkNode> nodesHere = _rangeData.computeIfAbsent(pos, k -> new ArrayList<>());
+			List<NetworkNode> nodesHere = rangeDataPrivate.computeIfAbsent(pos, k -> new ArrayList<>());
 
 			if (!nodesHere.contains(node)){
 				nodesHere.add(node);
@@ -234,10 +234,10 @@ public class Network implements AutoCloseable {
 	 */
 	public boolean RemoveNode(@NotNull NetworkNode node){
 		Objects.requireNonNull(node, "node");
-		_lock.writeLock().lock();
+		lockPrivate.writeLock().lock();
 		try {
 
-			boolean removed = _graph.removeVertex(node);
+			boolean removed = graphPrivate.removeVertex(node);
 			if (!removed){
 				return false;
 			}
@@ -245,12 +245,12 @@ public class Network implements AutoCloseable {
 			// Update range index + range cache
 			Set<GlobalPos> range = node.GetRange();
 			for (GlobalPos pos : range){
-				List<NetworkNode> nodesHere = _rangeData.get(pos);
+				List<NetworkNode> nodesHere = rangeDataPrivate.get(pos);
 				if (nodesHere != null){
 					nodesHere.remove(node);
 
 					if (nodesHere.isEmpty()){
-						_rangeData.remove(pos);
+						rangeDataPrivate.remove(pos);
 					}
 				}
 			}
@@ -258,12 +258,12 @@ public class Network implements AutoCloseable {
 			return true;
 
 		} finally {
-			_lock.writeLock().unlock();
+			lockPrivate.writeLock().unlock();
 		}
 	}
 
 	@NotNull
-	private final ConcurrentHashMap<GlobalPos, List<NetworkNode>> _rangeData = new ConcurrentHashMap<>();
+	private final ConcurrentHashMap<GlobalPos, List<NetworkNode>> rangeDataPrivate = new ConcurrentHashMap<>();
 
 	/**
 	 * Returns the set of all block positions covered by this network.
@@ -276,12 +276,12 @@ public class Network implements AutoCloseable {
 	 */
 	@NotNull
 	public Set<GlobalPos> GetRange(){
-		_lock.readLock().lock();
+		lockPrivate.readLock().lock();
 		try{
-			return Set.copyOf(_rangeData.keySet());
+			return Set.copyOf(rangeDataPrivate.keySet());
 		}
 		finally {
-			_lock.readLock().unlock();
+			lockPrivate.readLock().unlock();
 		}
 	}
 
@@ -300,35 +300,35 @@ public class Network implements AutoCloseable {
 	public Set<NetworkNode> NodesAt(@NotNull GlobalPos pos){
 		Objects.requireNonNull(pos, "pos");
 
-		_lock.readLock().lock();
+		lockPrivate.readLock().lock();
 		try{
-			List<NetworkNode> nodesHere = _rangeData.get(pos);
+			List<NetworkNode> nodesHere = rangeDataPrivate.get(pos);
 			if (nodesHere == null){
 				return Set.of();
 			}
 			return Set.copyOf(nodesHere);
 		} finally {
-			_lock.readLock().unlock();
+			lockPrivate.readLock().unlock();
 		}
 	}
 
 	@Override
 	public void close() {
-		_lock.writeLock().lock();
+		lockPrivate.writeLock().lock();
 		try{
-			NetworkTable._Networks.remove(_id);
+			NetworkTable.NetworksPackagePrivate.remove(idPrivate);
 
-			Set<NetworkNode> nodes = _graph.vertexSet();
+			Set<NetworkNode> nodes = graphPrivate.vertexSet();
 
-			_rangeData.clear();
+			rangeDataPrivate.clear();
 
-			_graph.removeAllVertices(nodes);
+			graphPrivate.removeAllVertices(nodes);
 			for(NetworkNode node : nodes){
 				node.close();
 			}
 		}
 		finally {
-			_lock.writeLock().unlock();
+			lockPrivate.writeLock().unlock();
 		}
 	}
 }

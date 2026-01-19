@@ -22,17 +22,20 @@ public final class BasicNetworkCoreBlockEntity extends NetworkComponentBlockEnti
 
 	@Override
 	public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-		Objects.requireNonNull(itemStack);
-		Objects.requireNonNull(world);
-
 		// TODO: validate that itemStack item type inherits from NetworkComponentPlacer
 
 		@Nullable UUID networkId = itemStack.get(Networks.UUID_COMPONENT_TYPE);
 
+		boolean reset = false;
+
 		if(networkId == null){
-			;
+			itemStack.set(Networks.UUID_COMPONENT_TYPE, Network.Create(world.getRegistryKey()).getId());
+			reset = true;
 		}
-		itemStack.set(Networks.UUID_COMPONENT_TYPE, Network.Create(world.getRegistryKey()).getId());
+
 		super.onPlaced(world, pos, state, placer, itemStack);
+		if(reset){
+			itemStack.remove(Networks.UUID_COMPONENT_TYPE);
+		}
 	}
 }

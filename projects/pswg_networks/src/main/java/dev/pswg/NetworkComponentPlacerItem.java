@@ -13,6 +13,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -47,23 +48,18 @@ public abstract class NetworkComponentPlacerItem extends BlockItem {
 			return super.useOnBlock(context);
 		}
 
-		// Make sure there is a NetworkComponent at that location.
+		@Nullable UUID networkId = null;
+
+		// Make sure there is a NetworkComponent at that    location, otherwise we just clear the data from the item.
 		BlockPos networkPos = context.getBlockPos();
 		BlockEntity blockEntity = world.getBlockEntity(networkPos);
-		if (!(blockEntity instanceof NetworkComponentBlockEntity networkComponent)) {
-			return ActionResult.PASS;
-		}
-
-		// Make sure the Component has a node.
-		NetworkNode node = networkComponent.node;
-		if (node == null) {
-			return ActionResult.PASS;
-		}
-
-		// Make sure the node is connected to a network.
-		UUID networkId = node.GetNetworkId();
-		if (networkId == null) {
-			return ActionResult.PASS;
+		if ((blockEntity instanceof NetworkComponentBlockEntity networkComponent)) {
+			// Make sure the Component has a node.
+			NetworkNode node = networkComponent.node;
+			if (node != null) {
+				// Make sure the node is connected to a network.
+				networkId = node.GetNetworkId();
+			}
 		}
 
 		// if we pass all the checks, add the component.
@@ -73,28 +69,7 @@ public abstract class NetworkComponentPlacerItem extends BlockItem {
 	}
 
 	@Override
-	public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
-		super.appendTooltip(stack, context, displayComponent, textConsumer, type);
-	}
-
-	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
 		return super.getTooltipData(stack);
 	}
-
-	/*@Override
-	public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-
-		if(X11.Screen.hasShiftDown()) {
-			tooltip.add(Text.translatable("tooltip.pswg.networks.chisel.shift_down"));
-		} else {
-			tooltip.add(Text.translatable("tooltip.tutorialmod.chisel"));
-		}
-
-		if(stack.get(ModDataComponentTypes.COORDINATES) != null) {
-			tooltip.add(Text.literal("Last Block Changed at " + stack.get(ModDataComponentTypes.COORDINATES)));
-		}
-
-		super.appendTooltip(stack, context, tooltip, type);
-	}*/
 }

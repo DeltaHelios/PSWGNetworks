@@ -12,7 +12,8 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 
-public final class NetworksItemGroups
+@SuppressWarnings("NonFinalUtilityClass")
+public class NetworksItemGroups
 {
 	public static final RegistryKey<ItemGroup> NETWORKS_GROUP_KEY = registerGroup("networks");
 	public static final ItemGroup NETWORKS_GROUP = FabricItemGroup

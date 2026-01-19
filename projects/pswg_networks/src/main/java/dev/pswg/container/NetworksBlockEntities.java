@@ -10,7 +10,8 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 
-public final class NetworksBlockEntities
+@SuppressWarnings("NonFinalUtilityClass")
+public class NetworksBlockEntities
 {
 	public static final BlockEntityType<BasicNetworkCoreBlockEntity> BASIC_NETWORK_CORE_BLOCK_ENTITY = Registry.register(
 			Registries.BLOCK_ENTITY_TYPE,
