@@ -11,24 +11,25 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class ChunkReference {
+// I swear this was necessary at some point...
+public final class ChunkReference {
 	@NotNull
-	private final ChunkPos _location;
+	private final ChunkPos locationPrivate;
 
 	@NotNull
-	private final RegistryKey<World> _world;
+	private final RegistryKey<World> worldPrivate   ;
 
 	public ChunkReference(@NotNull ChunkPos location, @NotNull RegistryKey<World> world){
 		Objects.requireNonNull(location);
 		Objects.requireNonNull(world);
-		_location = location;
-		_world = world;
+		locationPrivate = location;
+		worldPrivate = world;
 	}
 
 	public ChunkReference(@NotNull WorldChunk chunk){
 		Objects.requireNonNull(chunk);
-		_location = chunk.getPos();
-		_world = chunk.getWorld().getRegistryKey();
+		locationPrivate = chunk.getPos();
+		worldPrivate = chunk.getWorld().getRegistryKey();
 	}
 
 	/**
@@ -50,15 +51,15 @@ public class ChunkReference {
 			throw new IllegalStateException("ToChunk must be called on the server thread.");
 		}
 
-		ServerWorld serverWorld = server.getWorld(_world);
+		ServerWorld serverWorld = server.getWorld(worldPrivate);
 
 		if(serverWorld == null){
-			throw new IllegalStateException("World is not loaded: " + _world.getValue());
+			throw new IllegalStateException("World is not loaded: " + worldPrivate.getValue());
 		}
 
 		WorldChunk chunk = serverWorld.getChunkManager().getWorldChunk(
-				_location.x,
-				_location.z
+				locationPrivate.x,
+				locationPrivate.z
 		);
 
 		return chunk;
