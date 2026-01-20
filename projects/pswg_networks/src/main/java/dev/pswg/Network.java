@@ -1,7 +1,11 @@
 package dev.pswg;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.pswg.util.Graphs;
 import net.jcip.annotations.GuardedBy;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.util.Uuids;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
@@ -22,12 +26,17 @@ public class Network implements AutoCloseable {
 	private final ReadWriteLock lockPrivate = new ReentrantReadWriteLock();
 
 	@NotNull
-	private final UUID idPrivate = UUID.randomUUID();
+	private final UUID idPrivate;
 
 	// For now, we lock networks to a single world as that will make things easer.
 	// ideally we want to support multi, dimension ranges, but not during testing.
 	@NotNull
 	private final RegistryKey<World> worldPrivate;
+
+	// We use this so we can store the distance between nodes and don't have to calculate every time. Might not be useful.
+	// If not useful, move to DefaultEdge class and SimpleGraph class.
+	@NotNull
+	private final AsSynchronizedGraph<NetworkNode, DefaultWeightedEdge> graphPrivate;
 
 	public static Network Create(@NotNull RegistryKey<World> world){
 		Network n = new Network(world);
@@ -37,6 +46,14 @@ public class Network implements AutoCloseable {
 
 	private Network(@NotNull RegistryKey<World> world){
 		worldPrivate = Objects.requireNonNull(world);
+		graphPrivate = new AsSynchronizedGraph<>(new SimpleWeightedGraph<>(DefaultWeightedEdge.class));
+		idPrivate = UUID.randomUUID();
+	}
+
+	private Network(@NotNull RegistryKey<World> world, @NotNull AsSynchronizedGraph<NetworkNode, DefaultWeightedEdge> graph, @NotNull UUID id){
+		worldPrivate = Objects.requireNonNull(world);
+		idPrivate = Objects.requireNonNull(id);
+		graphPrivate = Objects.requireNonNull(graph);
 	}
 
 	public static @Nullable Network FromId(@NotNull UUID id){
@@ -45,10 +62,9 @@ public class Network implements AutoCloseable {
 	}
 
 
-	//                               We use this so we can store the distance between nodes and don't have to calculate every time. Might not be useful.
-	//                               If not useful, move to DefaultEdge class and SimpleGraph class.
-	@NotNull
-	private final Graph<NetworkNode, DefaultWeightedEdge> graphPrivate = new AsSynchronizedGraph<>(new SimpleWeightedGraph<>(DefaultWeightedEdge.class));
+
+
+
 
 	@NotNull
 	public UUID getId(){
@@ -62,7 +78,7 @@ public class Network implements AutoCloseable {
 	 * already present. A connection is only permitted if at least one node’s
 	 * range contains the other node’s position.</p>
 	 *
-	 * <p>The edge weight is set to the <strong>squared Euclidean distance</strong>
+	 * <p>The edge distance is set to the <strong>squared Euclidean distance</strong>
 	 * between the two node positions, measured in block coordinates.</p>
 	 *
 	 * @param a the first node to connect
@@ -331,4 +347,20 @@ public class Network implements AutoCloseable {
 			lockPrivate.writeLock().unlock();
 		}
 	}
+
+	private static final String IdKey = "id";
+
+	private static final String WorldKey = "world";
+
+	private static final String GraphKey = "graph";
+
+	public static final Codec<Network> CODEC = RecordCodecBuilder.create(instance -> instance
+			.group(
+					Uuids.CODEC.fieldOf(IdKey).forGetter(n -> n.idPrivate),
+					Networks.WORLD_KEY_CODEC.fieldOf(WorldKey).forGetter(n -> n.worldPrivate),
+					Graphs.CODEC.fieldOf(GraphKey).forGetter(n -> n.graphPrivate)
+			)
+			.apply(instance, (id, worldRegistryKey, graph) -> new Network(worldRegistryKey, graph, id))
+
+	);
 }

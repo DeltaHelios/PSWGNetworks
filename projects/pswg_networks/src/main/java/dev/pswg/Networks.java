@@ -1,5 +1,6 @@
 package dev.pswg;
 
+import com.mojang.serialization.Codec;
 import dev.pswg.api.GalaxiesAddon;
 import dev.pswg.container.NetworksBlockEntities;
 import dev.pswg.container.NetworksBlocks;
@@ -9,8 +10,11 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.component.ComponentType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Uuids;
+import net.minecraft.world.World;
 import org.slf4j.Logger;
 
 import java.util.UUID;
@@ -52,6 +56,9 @@ public final class Networks implements GalaxiesAddon
 	public static final ComponentType<UUID> UUID_COMPONENT_TYPE = registerDataComponent(
 			"uuid", builder -> builder.codec(Uuids.CODEC)
 	);
+
+	public static final Codec<RegistryKey<World>> WORLD_KEY_CODEC =
+			RegistryKey.createCodec(RegistryKeys.WORLD);
 
 	@Override
 	public void onGalaxiesReady() {
