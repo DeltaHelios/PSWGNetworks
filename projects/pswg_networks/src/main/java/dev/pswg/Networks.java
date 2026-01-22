@@ -17,6 +17,8 @@ import net.minecraft.util.Uuids;
 import net.minecraft.world.World;
 import org.slf4j.Logger;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
 
@@ -59,6 +61,12 @@ public final class Networks implements GalaxiesAddon
 
 	public static final Codec<RegistryKey<World>> WORLD_KEY_CODEC =
 			RegistryKey.createCodec(RegistryKeys.WORLD);
+
+	public static final Codec<Set<String>> STRING_SET_CODEC =
+		Codec.STRING.listOf().xmap(
+				Set::copyOf,
+				List::copyOf
+		);
 
 	@Override
 	public void onGalaxiesReady() {

@@ -5,13 +5,14 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.pswg.util.Graphs;
 import net.jcip.annotations.GuardedBy;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Uuids;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 import org.jgrapht.graph.concurrent.AsSynchronizedGraph;
@@ -38,6 +39,28 @@ public class Network implements AutoCloseable {
 	@NotNull
 	private final AsSynchronizedGraph<NetworkNode, DefaultWeightedEdge> graphPrivate;
 
+	private final Set<String> playerWhitelistPrivate;
+
+	@NotNull
+	public Set<String> GetPlayerWhitelist(){
+		return Set.copyOf(playerWhitelistPrivate);
+	}
+
+	public boolean AddPlayerToWhitelist(@NotNull String playerName){
+		Objects.requireNonNull(playerName);
+		return playerWhitelistPrivate.add(playerName);
+	}
+
+	public boolean RemovePlayerFromWhitelist(@NotNull String playerName){
+		Objects.requireNonNull(playerName);
+		return playerWhitelistPrivate.remove(playerName);
+	}
+
+	public boolean PlayerWhitelistContains(@NotNull String playerName){
+		Objects.requireNonNull(playerName);
+		return playerWhitelistPrivate.contains(playerName);
+	}
+
 	public static Network Create(@NotNull RegistryKey<World> world){
 		Network n = new Network(world);
 		NetworkTable.NetworksPackagePrivate.put(n.idPrivate, n);
@@ -48,22 +71,20 @@ public class Network implements AutoCloseable {
 		worldPrivate = Objects.requireNonNull(world);
 		graphPrivate = new AsSynchronizedGraph<>(new SimpleWeightedGraph<>(DefaultWeightedEdge.class));
 		idPrivate = UUID.randomUUID();
+		playerWhitelistPrivate = new HashSet<>();
 	}
 
-	private Network(@NotNull RegistryKey<World> world, @NotNull AsSynchronizedGraph<NetworkNode, DefaultWeightedEdge> graph, @NotNull UUID id){
+	private Network(@NotNull RegistryKey<World> world, @NotNull AsSynchronizedGraph<NetworkNode, DefaultWeightedEdge> graph, @NotNull UUID id, @NotNull Set<String> whitelist){
 		worldPrivate = Objects.requireNonNull(world);
 		idPrivate = Objects.requireNonNull(id);
 		graphPrivate = Objects.requireNonNull(graph);
+		playerWhitelistPrivate = Objects.requireNonNull(whitelist);
 	}
 
 	public static @Nullable Network FromId(@NotNull UUID id){
 		Objects.requireNonNull(id, "id");
 		return NetworkTable.NetworksPackagePrivate.get(id);
 	}
-
-
-
-
 
 
 	@NotNull
@@ -354,13 +375,20 @@ public class Network implements AutoCloseable {
 
 	private static final String GraphKey = "graph";
 
+	private static final String WhitelistKey = "whitelist";
+
 	public static final Codec<Network> CODEC = RecordCodecBuilder.create(instance -> instance
 			.group(
-					Uuids.CODEC.fieldOf(IdKey).forGetter(n -> n.idPrivate),
-					Networks.WORLD_KEY_CODEC.fieldOf(WorldKey).forGetter(n -> n.worldPrivate),
-					Graphs.CODEC.fieldOf(GraphKey).forGetter(n -> n.graphPrivate)
+				Uuids.CODEC.fieldOf(IdKey).forGetter(n -> n.idPrivate),
+				Networks.WORLD_KEY_CODEC.fieldOf(WorldKey).forGetter(n -> n.worldPrivate),
+				Graphs.CODEC.fieldOf(GraphKey).forGetter(n -> n.graphPrivate),
+				Networks.STRING_SET_CODEC.fieldOf(WhitelistKey).forGetter(n -> n.playerWhitelistPrivate)
 			)
-			.apply(instance, (id, worldRegistryKey, graph) -> new Network(worldRegistryKey, graph, id))
+			.apply(
+				instance,
+		        (id, worldRegistryKey, graph, whitelist) ->
+					new Network(worldRegistryKey, graph, id, whitelist)
+			)
 
 	);
 }
