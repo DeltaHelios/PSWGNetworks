@@ -2,14 +2,11 @@ package dev.pswg;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.tooltip.TooltipData;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -18,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public abstract class NetworkComponentPlacerItem extends BlockItem {
 
@@ -55,7 +51,7 @@ public abstract class NetworkComponentPlacerItem extends BlockItem {
 		BlockEntity blockEntity = world.getBlockEntity(networkPos);
 		if ((blockEntity instanceof NetworkComponentBlockEntity networkComponent)) {
 			// Make sure the Component has a node.
-			NetworkNode node = networkComponent.node;
+			NetworkNode node = networkComponent.Node;
 			if (node != null) {
 				// Make sure the node is connected to a network.
 				networkId = node.GetNetworkId();
