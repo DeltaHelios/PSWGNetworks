@@ -73,16 +73,22 @@ public class NetworkNode implements AutoCloseable {
 	 *
 	 * This method should only be called by {@link Network}.
 	 *
-	 * @param NetworkID the UUID of the network to assign
+	 * @param networkID the UUID of the network to assign
 	 * @return {@code true} if the network ID was set successfully;
 	 *         {@code false} if this object was already assigned to a network
 	 */
-	boolean SetNetwork(UUID NetworkID){
-		Objects.requireNonNull(NetworkID, "NetworkID");
+	boolean SetNetwork(UUID networkID){
+		Objects.requireNonNull(networkID, "networkID");
+		if(!Network.exists(networkID)){
+			throw new IllegalArgumentException("You must pass in the id of an existing network");
+		}
+
 		lockPrivate.writeLock().lock();
 		try{
 			if(networkIdPrivate == null){
-				networkIdPrivate = NetworkID;
+				networkIdPrivate = networkID;
+				Network target = Network.FromId(networkID);
+				assert target != null;
 				return true;
 			}
 			else{

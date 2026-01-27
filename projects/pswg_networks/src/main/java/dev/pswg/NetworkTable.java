@@ -11,8 +11,8 @@ public final class NetworkTable {
 	@NotNull
 	static ConcurrentHashMap<@NotNull UUID, @NotNull Network> NetworksPackagePrivate = new ConcurrentHashMap<>();
 
-	public static boolean NetworksContainsKey(UUID key){
-		return NetworksPackagePrivate.containsKey(key);
+	public static Network GetNetwork(UUID key){
+		return NetworksPackagePrivate.get(key);
 	}
 
 	public static Set<UUID> GetNetworkIds(){
@@ -37,6 +37,10 @@ public final class NetworkTable {
 	static ConcurrentHashMap<@NotNull UUID, @NotNull NetworkNode> NodesPackagePrivate = new ConcurrentHashMap<>();
 
 	static ConcurrentHashMap<@NotNull NetworkNode, Optional<NetworkComponentBlockEntity>> NodeToComponentPackagePrivate = new ConcurrentHashMap<>();
+
+	public static Optional<NetworkComponentBlockEntity> GetComponent(NetworkNode node){
+		return NodeToComponentPackagePrivate.get(node);
+	}
 
 	public static void ToggleNetworkGlow(@NotNull UUID networkId){
 		Objects.requireNonNull(networkId);

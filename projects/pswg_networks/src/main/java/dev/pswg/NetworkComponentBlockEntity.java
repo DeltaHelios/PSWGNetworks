@@ -27,7 +27,7 @@ public abstract class NetworkComponentBlockEntity extends BlockEntity {
 	@Nullable
 	public NetworkNode Node;
 
-	@NotNull
+	@Nullable
 	public VoxelShape Shape;
 
 	public boolean Glowing = false;
@@ -107,7 +107,7 @@ public abstract class NetworkComponentBlockEntity extends BlockEntity {
 			return;
 		}
 
-		Node.SetNetwork(networkId);
+		Objects.requireNonNull(Network.FromId(networkId)).AddNode(Node);
 
 		// attempt to connect to the network.
 	}

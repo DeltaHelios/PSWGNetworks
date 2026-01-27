@@ -90,6 +90,10 @@ public class Network implements AutoCloseable {
 		return NetworkTable.NetworksPackagePrivate.get(id);
 	}
 
+	public static boolean exists(@NotNull UUID id){
+		return NetworkTable.NetworksPackagePrivate.containsKey(Objects.requireNonNull(id, "id"));
+	}
+
 
 	@NotNull
 	public UUID getId(){
