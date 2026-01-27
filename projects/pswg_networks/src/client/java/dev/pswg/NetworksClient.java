@@ -2,15 +2,9 @@ package dev.pswg;
 
 import dev.pswg.api.GalaxiesClientAddon;
 import dev.pswg.container.NetworksBlockEntities;
-import dev.pswg.util.NetworkComponentBlockEntityRenderState;
 import dev.pswg.util.NetworkComponentBlockEntityRenderer;
-import dev.pswg.util.NetworkComponentBlockEntityRendererFactory;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
-import net.fabricmc.fabric.impl.client.rendering.BlockEntityRendererRegistryImpl;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.item.Item;
 import net.minecraft.text.Text;
 
@@ -38,6 +32,8 @@ public class NetworksClient implements GalaxiesClientAddon
 
 			lines.add(Text.literal("Network: \"" + networkId + "\""));
 		});
+
+		BlockEntityRendererFactories.register(NetworksBlockEntities.BASIC_NETWORK_CORE_BLOCK_ENTITY, NetworkComponentBlockEntityRenderer::new);
 
 		Networks.LOGGER.info("Client module initialized");
 	}
