@@ -118,6 +118,7 @@ public class NetworkNode implements AutoCloseable {
 	public static @NotNull NetworkNode Create(@NotNull GlobalPos location){
 		NetworkNode output = new NetworkNode(location, 10);
 		NetworkTable.NodesPackagePrivate.put(output.idPrivate, output);
+		NetworkTable.NodeToComponentPackagePrivate.put(output, Optional.empty());
 		return output;
 	}
 
@@ -144,6 +145,7 @@ public class NetworkNode implements AutoCloseable {
 	@Override
 	public void close() {
 		NetworkTable.NodesPackagePrivate.remove(idPrivate);
+		NetworkTable.NodeToComponentPackagePrivate.remove(this);
 	}
 
 	// The below 4 fields are just for codecs.

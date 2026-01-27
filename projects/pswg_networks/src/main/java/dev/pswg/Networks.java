@@ -1,17 +1,22 @@
 package dev.pswg;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.serialization.Codec;
 import dev.pswg.api.GalaxiesAddon;
 import dev.pswg.container.NetworksBlockEntities;
 import dev.pswg.container.NetworksBlocks;
 import dev.pswg.container.NetworksItemGroups;
 import dev.pswg.container.NetworksItems;
+import dev.pswg.util.NetworkGlowingCommand;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.component.ComponentType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Uuids;
 import net.minecraft.world.World;
@@ -76,9 +81,9 @@ public final class Networks implements GalaxiesAddon
 		NetworksBlockEntities.register();
 
 		// When the server stops dispose of all networks (which will also dispose all nodes).
-		ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
-			NetworkTable.CloseAll();
-		});
+		ServerLifecycleEvents.SERVER_STOPPING.register(server -> NetworkTable.CloseAll());
+
+		CommandRegistrationCallback.EVENT.register(NetworkGlowingCommand.Command);
 
 		LOGGER.info("Module initialized");
 	}

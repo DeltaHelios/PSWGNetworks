@@ -39,6 +39,10 @@ public class Network implements AutoCloseable {
 	@NotNull
 	private final AsSynchronizedGraph<NetworkNode, DefaultWeightedEdge> graphPrivate;
 
+	public Set<NetworkNode> GetNodes(){
+		return Set.copyOf(graphPrivate.vertexSet());
+	}
+
 	private final Set<String> playerWhitelistPrivate;
 
 	@NotNull

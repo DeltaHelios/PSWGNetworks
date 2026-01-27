@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 public abstract class NetworkComponentBlockEntity extends BlockEntity {
@@ -28,6 +29,8 @@ public abstract class NetworkComponentBlockEntity extends BlockEntity {
 
 	@NotNull
 	public VoxelShape Shape;
+
+	public boolean Glowing = false;
 
 	/**
 	 * Constructs a {@code NetworkComponentBlockEntity} using the outline shape
@@ -60,6 +63,7 @@ public abstract class NetworkComponentBlockEntity extends BlockEntity {
 
 	protected void disposeNode(){
 		if(Node != null){
+			NetworkTable.NodeToComponentPackagePrivate.remove(Node);
 			Node.close();
 		}
 		Node = null;
@@ -79,11 +83,13 @@ public abstract class NetworkComponentBlockEntity extends BlockEntity {
 	private VoxelShape getBaseShape() {
 		BlockState blockState = getCachedState();
 
-		// WARNING: world is nullable. if its nulll and if this is attached to a block that requires world for its implementation of AbstractBlock.getOutlineShape()
+		// WARNING: world is nullable. if its null and if this is attached to a block that requires world for its implementation of AbstractBlock.getOutlineShape()
 		// this will throw a null pointer exception.
 		// In normal minecraft that's only the ShulkerBoxBlock that I could find.
 		return blockState.getOutlineShape(world, pos, ShapeContext.absent());
 	}
+
+
 
 	public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
 		if (!(itemStack.getItem() instanceof NetworkComponentPlacerItem)){
@@ -92,6 +98,7 @@ public abstract class NetworkComponentBlockEntity extends BlockEntity {
 		}
 
 		Node = NetworkNode.Create(new GlobalPos(world.getRegistryKey(), pos));
+		NetworkTable.NodeToComponentPackagePrivate.put(Node, Optional.of(this));
 
 		@Nullable UUID networkId = itemStack.get(Networks.UUID_COMPONENT_TYPE);
 
