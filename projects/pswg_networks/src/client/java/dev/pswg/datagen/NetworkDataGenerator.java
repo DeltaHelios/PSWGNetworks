@@ -1,6 +1,6 @@
 package dev.pswg.datagen;
 
-import dev.pswg.Galaxies;
+
 import dev.pswg.Networks;
 import dev.pswg.autoreg.AutoGenerateUtil;
 import dev.pswg.container.NetworksBlocks;
@@ -38,7 +38,7 @@ public class NetworkDataGenerator implements DataGeneratorEntrypoint
 	{
 		var pack = generator.createPack();
 
-		Galaxies.LOGGER.info("Running Networks Data Generator");
+		Networks.LOGGER.info("Running Networks Data Generator");
 
 		pack.addProvider(LangGenerator::new);
 
@@ -122,7 +122,7 @@ public class NetworkDataGenerator implements DataGeneratorEntrypoint
 		public void registerItem(ItemModelGenerator generator, Item item, DataGenItem dataGenItem)
 		{
 			if (dataGenItem.genModel())
-				register(generator, item, Galaxies.id("item/wizard"), Models.GENERATED);
+				register(generator, item, Networks.id("item/wizard"), Models.GENERATED);
 			else
 				switch (dataGenItem.model())
 				{

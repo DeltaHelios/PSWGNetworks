@@ -1,6 +1,8 @@
 package dev.pswg.container;
 
+import dev.pswg.Galaxies;
 import dev.pswg.Networks;
+import net.fabricmc.fabric.api.item.v1.FabricItem;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.block.Blocks;
@@ -11,6 +13,9 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+
+
 
 @SuppressWarnings("NonFinalUtilityClass")
 public class NetworksItemGroups
