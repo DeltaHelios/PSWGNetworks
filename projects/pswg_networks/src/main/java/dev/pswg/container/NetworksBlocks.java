@@ -11,7 +11,7 @@ import net.minecraft.block.Block;
 public class NetworksBlocks
 {
 	public static final Block BASIC_NETWORK_CORE_BLOCK = Registrar.blockWithoutItem(
-			Networks.id(BasicNetworkCoreBlock.NAME),
+			Networks.id("basic_network_core"),
 			BasicNetworkCoreBlock::new,
 			AbstractBlock.Settings
                 .create()

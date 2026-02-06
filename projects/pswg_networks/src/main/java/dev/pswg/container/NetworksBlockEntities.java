@@ -15,7 +15,7 @@ public class NetworksBlockEntities
 {
 	public static final BlockEntityType<BasicNetworkCoreBlockEntity> BASIC_NETWORK_CORE_BLOCK_ENTITY = Registry.register(
 			Registries.BLOCK_ENTITY_TYPE,
-			Networks.id(BasicNetworkCoreBlock.NAME),
+			Networks.id("basic_network_core"),
 			FabricBlockEntityTypeBuilder
 					.create(BasicNetworkCoreBlockEntity::new, NetworksBlocks.BASIC_NETWORK_CORE_BLOCK)
 					.build()
@@ -23,7 +23,7 @@ public class NetworksBlockEntities
 
 	public static final BlockEntityType<BasicNetworkComponentBlockEntity> BASIC_NETWORK_COMPONENT_BLOCK_ENTITY = Registry.register(
 			Registries.BLOCK_ENTITY_TYPE,
-			Networks.id(BasicNetworkComponentBlock.NAME),
+			Networks.id("basic_network_core"),
 			FabricBlockEntityTypeBuilder
 					.create(BasicNetworkComponentBlockEntity::new, NetworksBlocks.BASIC_NETWORK_COMPONENT_BLOCK)
 					.build()

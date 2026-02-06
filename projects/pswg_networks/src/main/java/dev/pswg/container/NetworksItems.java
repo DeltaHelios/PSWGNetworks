@@ -28,7 +28,7 @@ public class NetworksItems
 	public static void register() {}
 
 	public static final Item BASIC_NETWORK_CORE_ITEM = registerItem(
-			BasicNetworkCoreBlock.NAME,
+			"basic_network_core",
 			BasicNetworkCoreItem::new,
 			new Item.Settings()
 	);

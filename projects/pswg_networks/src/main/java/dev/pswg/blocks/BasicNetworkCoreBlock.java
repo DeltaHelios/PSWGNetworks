@@ -9,9 +9,6 @@ import net.minecraft.block.BlockWithEntity;
 import net.minecraft.util.math.BlockPos;
 
 public class BasicNetworkCoreBlock extends NetworkBlock {
-
-	public static final String NAME = "basic_network_core";
-
 	public BasicNetworkCoreBlock(Settings settings) {
 		super(settings);
 	}
