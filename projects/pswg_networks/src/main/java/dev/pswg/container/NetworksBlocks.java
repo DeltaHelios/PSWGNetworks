@@ -21,7 +21,7 @@ public class NetworksBlocks
 	);
 
 	public static final Block BASIC_NETWORK_COMPONENT_BLOCK = Registrar.blockWithoutItem(
-			Networks.id(BasicNetworkComponentBlock.NAME),
+			Networks.id("basic_network_component_block"),
 			BasicNetworkComponentBlock::new,
 			AbstractBlock.Settings
 					.create()
