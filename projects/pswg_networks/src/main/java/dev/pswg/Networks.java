@@ -2,16 +2,10 @@ package dev.pswg;
 
 import com.mojang.serialization.Codec;
 import dev.pswg.api.GalaxiesAddon;
-import dev.pswg.container.NetworksBlockEntities;
-import dev.pswg.container.NetworksBlocks;
-import dev.pswg.container.NetworksItemGroups;
-import dev.pswg.container.NetworksItems;
+import dev.pswg.container.*;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.component.ComponentType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Uuids;
 import net.minecraft.world.World;
@@ -70,10 +64,12 @@ public final class Networks implements GalaxiesAddon
 
 	@Override
 	public void onGalaxiesReady() {
+		NetworksSounds.initialize();
 		NetworksItems.register();
 		NetworksItemGroups.register();
 		NetworksBlocks.register();
 		NetworksBlockEntities.register();
+
 
 		// When the server stops dispose of all networks (which will also dispose all nodes).
 		ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
@@ -81,5 +77,7 @@ public final class Networks implements GalaxiesAddon
 		});
 
 		LOGGER.info("Module initialized");
+
+
 	}
 }

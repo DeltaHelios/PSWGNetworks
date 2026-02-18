@@ -1,10 +1,8 @@
 package dev.pswg.container;
 
+import dev.pswg.Network;
 import dev.pswg.Networks;
-import dev.pswg.blocks.BasicNetworkComponentBlock;
-import dev.pswg.blocks.BasicNetworkCoreBlock;
-import dev.pswg.blocks.BlastDoorBlock;
-import dev.pswg.blocks.DataTerminalBlock;
+import dev.pswg.blocks.*;
 import dev.pswg.registry.Registrar;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -35,6 +33,7 @@ public class NetworksBlocks
 			BlastDoorBlock::new,
 			AbstractBlock.Settings.create()
 					.hardness(1f)
+					.luminance(state -> state.get(BlastDoorBlock.ACTIVATED) ? 15 : 0 )
 	);
 
 	public static final Block DATA_TERMINAL_BLOCK = Registrar.block(
@@ -43,6 +42,14 @@ public class NetworksBlocks
 			AbstractBlock.Settings.create()
 					.hardness(1f)
 					.noCollision()
+	);
+
+	public static final Block MINI_TURRET_BLOCK = Registrar.block(
+			Networks.id("mini_turret"),
+			MiniTurretBlock::new,
+			AbstractBlock.Settings.create()
+					.hardness(1f)
+					.dropsNothing()
 	);
 
 	private static Block createBlock(String key, AbstractBlock.Settings settings)

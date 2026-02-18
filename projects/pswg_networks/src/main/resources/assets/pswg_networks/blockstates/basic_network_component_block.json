@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "pswg_networks:block/basic_network_component_block" }
+  }
+}

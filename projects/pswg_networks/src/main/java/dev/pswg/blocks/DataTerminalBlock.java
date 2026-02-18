@@ -10,8 +10,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.world.BlockView;
 
-import javax.swing.text.html.BlockView;
 import java.util.function.Function;
 
 public class DataTerminalBlock extends NetworkBlock {

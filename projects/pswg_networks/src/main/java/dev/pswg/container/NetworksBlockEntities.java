@@ -3,6 +3,7 @@ package dev.pswg.container;
 import dev.pswg.Networks;
 import dev.pswg.blockEntities.BasicNetworkComponentBlockEntity;
 import dev.pswg.blockEntities.BasicNetworkCoreBlockEntity;
+import dev.pswg.blockEntities.MiniTurretBlockEntity;
 import dev.pswg.blocks.BasicNetworkComponentBlock;
 import dev.pswg.blocks.BasicNetworkCoreBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -26,6 +27,14 @@ public class NetworksBlockEntities
 			Networks.id(BasicNetworkComponentBlock.NAME),
 			FabricBlockEntityTypeBuilder
 					.create(BasicNetworkComponentBlockEntity::new, NetworksBlocks.BASIC_NETWORK_COMPONENT_BLOCK)
+					.build()
+	);
+
+	public static final BlockEntityType<BasicNetworkComponentBlockEntity> MINI_TURRET_BLOCK_ENTITY = Registry.register(
+			Registries.BLOCK_ENTITY_TYPE,
+			Networks.id("mini_turret_block_entity"),
+			FabricBlockEntityTypeBuilder
+					.create(BasicNetworkComponentBlockEntity::new, NetworksBlocks.MINI_TURRET_BLOCK)
 					.build()
 	);
 	public static void register(){}
